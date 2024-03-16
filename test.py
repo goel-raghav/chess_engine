@@ -1,9 +1,10 @@
 import chess
-from chessfunc import encode_board
+from chessfunc import transform_fen
 from chess import Move
 import numpy as np
 import sys
 from time import perf_counter
+import tensorflow as tf
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -14,7 +15,7 @@ from piece import get_piece_eval
 #--------------------
 # open downloaded games
 #----------------------
-
+print (tf.config.list_physical_devices('GPU'))
 pgn = open("master_games.pgn")
 game = chess.pgn.read_game(pgn)
 
@@ -31,5 +32,5 @@ for move in moves:
 
 print(board)
 
-print(encode_board(board))
+print(transform_fen(board.fen()))
 board.pieces()
