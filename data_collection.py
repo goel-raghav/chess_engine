@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 29 09:49:39 2024
-
-@author: 898796
-"""
-
 import chess.pgn
 import numpy as np
 from piece import get_piece_eval
+
+# TODO remoeve redunant data points
 
 whiteCount=0
 blackCount=0

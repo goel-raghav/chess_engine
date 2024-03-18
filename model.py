@@ -12,8 +12,8 @@ if len(physical_devices) > 0:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 with np.load("data_elo_transform_board.npz") as data:
-    x = data['x'][:100_000]
-    y = data['y'][:100_000].reshape(-1, 1)
+    x = data['x']
+    y = data['y'].reshape(-1, 1)
 
 
 y = preprocessing.normalize(y)
@@ -28,6 +28,8 @@ callback = callbacks.EarlyStopping(monitor='val_mae',
                               min_delta=0,
                               patience=5,
                               verbose=0, mode='auto', restore_best_weights=True)
+
+modelCheckPoint = callbacks.ModelCheckpoint("check_point", save_best_only=True, save_freq=3, monitor="val_mae")
 # TODO add ModelCheckPoints
 # TODO try adding mutliple points of evaluation, so instead of one output have like 3 or 4
 
@@ -35,26 +37,26 @@ network = models.Sequential()
 
 network.add(layers.Conv2D(256, (3, 3), activation="relu", input_shape=(8, 8, 1), padding="same"))
 network.add(layers.BatchNormalization())
-network.add(layers.Dropout(.1))
+network.add(layers.Dropout(.05))
 
 network.add(layers.Conv2D(256, (3, 3), activation="relu", padding="same"))
 network.add(layers.BatchNormalization())
-network.add(layers.Dropout(.1))
+network.add(layers.Dropout(.05))
 
 network.add(layers.Conv2D(256, (5, 5), activation="relu"))
 network.add(layers.BatchNormalization())
-network.add(layers.Dropout(.1))
+network.add(layers.Dropout(.05))
 
 
 network.add(layers.Flatten(input_shape=(8, 8, 1)))
 
-network.add(layers.Dense(256, activation="relu", kernel_regularizer=regularizers.L1L2(l1=1e-5, l2=1e-4)))
+network.add(layers.Dense(256, activation="relu", ))
 network.add(layers.BatchNormalization())
-network.add(layers.Dropout(.5))
+network.add(layers.Dropout(.1))
 
-network.add(layers.Dense(256, activation="relu", kernel_regularizer=regularizers.L1L2(l1=1e-5, l2=1e-4)))
+network.add(layers.Dense(256, activation="relu",))
 network.add(layers.BatchNormalization())
-network.add(layers.Dropout(.5))
+network.add(layers.Dropout(.1))
 
 network.add(layers.Dense(1, activation='tanh'))
 network.compile(optimizer = 'adam',

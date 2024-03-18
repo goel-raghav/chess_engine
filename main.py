@@ -15,6 +15,7 @@ from search import predict
 import search
 from chessfunc import transform_fen
 
+tf.config.optimizer.set_jit(True)
 # TODO create a command prompt for easier testing
 
 test = chess.Board() 
@@ -34,7 +35,7 @@ def print_line(line, board: chess.Board):
 while True:
     t1 = perf_counter()
     # score, best_line, best_depth = iterative_deepening(test, 5)
-    score, best_line = nmax(test, 3, 1, -math.inf, math.inf)
+    score, best_line = nmax(test, 4, 1, -math.inf, math.inf)
     t2 = perf_counter()
 
     print(print_line(best_line, test))
