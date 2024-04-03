@@ -39,8 +39,8 @@ print("loaded games")
 x = []
 y=[]
 # function to turn fen string into usuable nueral network stuff
-from chessfunc import encode_board
-from chessfunc import transform_fen
+from encode import encode_board
+from encode import transform_fen
 # function to convert get x and y
 def get_data(board, i, game_length, moves):
     global blackCount

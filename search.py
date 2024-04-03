@@ -1,24 +1,17 @@
-from chessfunc import transform_fen
 from chess import Board
 from chess import Move
-# from keras import saving
-from time import perf_counter as t
-import math
 
+from time import perf_counter
+from math import inf
 
-
-# import tensorflow as tf
-import numpy as np
-import random
 import torch
 
-# network = saving.load_model("test_model2.keras")
+from encode import transform_fen
+
+from model.neural_network import NeuralNetwork
 
 # TODO break down into more functions 
 
-# @tf.function(jit_compile=True)
-
-from pytorch1 import NeuralNetwork
 network = NeuralNetwork()
 network.load_state_dict(torch.load("model_weights"))
 network.eval()
@@ -29,6 +22,7 @@ def predict(val):
     with torch.no_grad():
         e = network(val)
     return e
+
 eval_count = 0
 table_count = 0
 total_predict_time = 0
@@ -36,31 +30,9 @@ total_eval_time = 0
 total_sort_time = 0
 table_time = 0
 
-
 killer_moves = [None, None]
 prev_move = None
 table = {}
-
-def iterative_deepening(board, time):
-
-    max_depth = 100 # temp since depth won't actually reach 100
-    best_depth = 0
-    start_time = t()
-    
-    score = 0
-    move = None
-    global prev_move
-    for depth in range(1, max_depth):
-        if t() - start_time < time:
-            best_depth = depth
-            score, move = nmax(board, depth, True, -math.inf, math.inf)
-            prev_move = move[0]
-            print(prev_move)
-            print(len(table))
-
-    
-    return score, move, best_depth
-
     
 def nmax(board: Board, depth, color, a, b):
     global total_sort_time
@@ -68,14 +40,14 @@ def nmax(board: Board, depth, color, a, b):
         score, _ = evaluate(board, color)
         return score * color, []
     
-    score = -math.inf
+    score = -inf
     best_move = []
 
     moves = board.legal_moves
 
-    sort_t1 = t()
+    sort_t1 = perf_counter()
     moves = sorted(moves, key=lambda move: move_key(move, board))
-    sort_t2 = t()
+    sort_t2 = perf_counter()
     total_sort_time += sort_t2 - sort_t1
 
     for move in moves:
@@ -103,18 +75,7 @@ def evaluate(board: Board, color):
     global network
     global table_time
 
-    eval_t1 = t()
-    
-    # table_t1 = t()
-    # table_score = table.get(str(board))
-    # table_t2 = t()
-    # table_time += table_t2 - table_t1
-
-    # if table_score is not None:
-    #     table_count += 1
-    #     eval_t2 = t()
-    #     total_eval_time += eval_t2 - eval_t1
-    #     return table_score, None
+    eval_t1 = perf_counter()
     
     eval_count += 1
 
@@ -123,23 +84,17 @@ def evaluate(board: Board, color):
     
     cur_x = transform_fen(board.fen()).reshape(1, 1, 8, 8)
 
-    t1 = t()
+    t1 = perf_counter()
     score = predict(cur_x)
-    t2 = t()
+    t2 = perf_counter()
     total_predict_time += t2 - t1
 
-    # table_t1 = t()
-    # table[str(board)] = score
-    # table_t2 = t()
-    # table_time += table_t2 - table_t1
-
-    eval_t2 = t()
+    eval_t2 = perf_counter()
     total_eval_time += eval_t2 - eval_t1
 
     return score, []
 
 def move_key(move: Move, board: Board): 
-    # TODO fix to use `is_capture`
     global killer_moves
     global prev_move
 
