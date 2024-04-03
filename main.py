@@ -6,7 +6,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 
-import tensorflow as tf
+# import tensorflow as tf
 from time import perf_counter
 from search import profile
 from search import nmax
@@ -15,7 +15,9 @@ from search import predict
 import search
 from chessfunc import transform_fen
 
-tf.config.optimizer.set_jit(True)
+
+
+# tf.config.optimizer.set_jit(True)
 # TODO create a command prompt for easier testing
 
 test = chess.Board() 
@@ -26,7 +28,7 @@ def print_line(line, board: chess.Board):
         print(board)
         print(move)
         print(" ")
-    cur_x = transform_fen(board.fen()).reshape(1, 8, 8)
+    cur_x = transform_fen(board.fen()).reshape(1, 1, 8, 8)
     print(float(predict(cur_x)))
 
     for i in range(len(line)):

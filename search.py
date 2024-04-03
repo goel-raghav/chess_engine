@@ -1,27 +1,34 @@
 from chessfunc import transform_fen
 from chess import Board
 from chess import Move
-from keras import saving
+# from keras import saving
 from time import perf_counter as t
 import math
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 
-import tensorflow as tf
+# import tensorflow as tf
 import numpy as np
 import random
+import torch
 
-network = saving.load_model("test_model2.keras")
+# network = saving.load_model("test_model2.keras")
 
 # TODO break down into more functions 
 
-@tf.function(jit_compile=True)
-def predict(val):
-    print("TRACING")
-    return network(val)
+# @tf.function(jit_compile=True)
 
+from pytorch1 import NeuralNetwork
+network = NeuralNetwork()
+network.load_state_dict(torch.load("model_weights"))
+network.eval()
+
+def predict(val):
+    val = torch.from_numpy(val)
+    val = val.float()
+    with torch.no_grad():
+        e = network(val)
+    return e
 eval_count = 0
 table_count = 0
 total_predict_time = 0
@@ -98,33 +105,33 @@ def evaluate(board: Board, color):
 
     eval_t1 = t()
     
-    table_t1 = t()
-    table_score = table.get(str(board))
-    table_t2 = t()
-    table_time += table_t2 - table_t1
+    # table_t1 = t()
+    # table_score = table.get(str(board))
+    # table_t2 = t()
+    # table_time += table_t2 - table_t1
 
-    if table_score is not None:
-        table_count += 1
-        eval_t2 = t()
-        total_eval_time += eval_t2 - eval_t1
-        return table_score, None
+    # if table_score is not None:
+    #     table_count += 1
+    #     eval_t2 = t()
+    #     total_eval_time += eval_t2 - eval_t1
+    #     return table_score, None
     
     eval_count += 1
 
     if board.is_checkmate():
         return 100 * color, []
     
-    cur_x = transform_fen(board.fen()).reshape(1, 8, 8)
+    cur_x = transform_fen(board.fen()).reshape(1, 1, 8, 8)
 
     t1 = t()
-    score = float(predict(cur_x))
+    score = predict(cur_x)
     t2 = t()
     total_predict_time += t2 - t1
 
-    table_t1 = t()
-    table[str(board)] = score
-    table_t2 = t()
-    table_time += table_t2 - table_t1
+    # table_t1 = t()
+    # table[str(board)] = score
+    # table_t2 = t()
+    # table_time += table_t2 - table_t1
 
     eval_t2 = t()
     total_eval_time += eval_t2 - eval_t1

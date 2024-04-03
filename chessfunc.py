@@ -10,10 +10,6 @@ from chess import Move
 from chess import BLACK, WHITE
 from sklearn import preprocessing
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-
-import tensorflow as tf
 
 piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,
                 "p": -11, "b": -31, "n": -32, "r": -54, "q": -95, "k": -100}
