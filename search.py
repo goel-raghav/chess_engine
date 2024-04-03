@@ -7,6 +7,7 @@ from math import inf
 import torch
 
 from encode import transform_fen
+from encode import encode_board
 
 from model.neural_network import NeuralNetwork
 

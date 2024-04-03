@@ -12,10 +12,10 @@ model = NeuralNetwork().cuda()
 
 batch_size = 256
 learning_rate = 1e-3
-epochs = 30
+epochs = 50
 
-with np.load("data_elo_transform_board.npz") as data:
-    x = data['x'].reshape(-1, 1, 8, 8)
+with np.load("data\data_12d.npz") as data:
+    x = data['x'].reshape(-1, 12, 8, 8)
     y = data['y'].reshape(-1, 1)
 
 y = preprocessing.normalize(y)
@@ -27,10 +27,10 @@ X_test = torch.tensor(X_test).to(torch.float32)
 y_test = torch.tensor(y_test).to(torch.float32)
 
 data = TensorDataset(X_train, y_train)
-dataloader = DataLoader(data, batch_size=256)
+dataloader = DataLoader(data, batch_size=batch_size)
 
 test_data = TensorDataset(X_test, y_test)
-test_dataloader = DataLoader(test_data, batch_size=256)
+test_dataloader = DataLoader(test_data, batch_size=batch_size)
 
 loss_fn = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -81,4 +81,4 @@ if __name__ == "__main__":
         test_loop(test_dataloader, model, loss_fn)
     print("Done!")
 
-    torch.save(model.state_dict(), "model_weights")
+    torch.save(model.state_dict(), "test_model_weights")
