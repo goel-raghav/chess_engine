@@ -16,7 +16,7 @@ epochs = 50
 
 with np.load("data\huge_data_piece.npz") as data:
     print(data["x"].shape)
-    x = data['x'].reshape(-1, 12, 8, 8) * 10
+    x = data['x'].reshape(-1, 12, 8, 8) 
     y = data['y'].reshape(-1, 1)
 
 

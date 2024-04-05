@@ -1,4 +1,5 @@
 from torch import nn
+import torch
 
 class NeuralNetwork(nn.Module):
     def __init__(self):

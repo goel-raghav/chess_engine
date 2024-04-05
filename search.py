@@ -7,6 +7,7 @@ from math import inf
 import numpy as np
 
 import torch
+from torch import nn
 
 from encode import transform_fen
 from encode import encode_board
@@ -19,12 +20,20 @@ network = NeuralNetwork()
 network.load_state_dict(torch.load("model_weights"))
 network.eval()
 
+sample_input = torch.rand(1, 1, 8, 8)
+torch.jit.enable_onednn_fusion(True)
+traced_model = torch.jit.trace(network, sample_input)
+traced_model = torch.jit.freeze(traced_model)
+traced_model(sample_input)
+traced_model(sample_input)
+
+print('Ready')
 
 def predict(val):
     val = torch.from_numpy(val)
     val = val.float()
     with torch.no_grad():
-        e = network(val)
+        e = traced_model(val)
     return e
 
 eval_count = 0
@@ -59,36 +68,36 @@ def nmax(board: Board, depth, color, a, b):
     total_sort_time += sort_t2 - sort_t1
 
     # still in testing
-    # if depth == 1:
-    #     boards = []
-    #     for move in moves:
-    #         board.push(move)
-    #         boards.append(board.copy())
-    #         board.pop()
+    if depth == 1:
+        boards = []
+        for move in moves:
+            board.push(move)
+            boards.append(board.copy())
+            board.pop()
         
 
 
             
-    #     for i in range(0, len(boards), 2):
-    #         current = boards[i: i+2]
-    #         scores, _ = evaluate(current, color * -1)
-    #         scores *= color
+        for i in range(0, len(boards), 10):
+            current = boards[i: i+10]
+            scores, _ = evaluate(current, color * -1)
+            scores *= color
             
             
-    #         bi = torch.argmax(scores)
-    #         t1 = perf_counter()
-    #         if scores[bi] > score:
-    #             score = scores[bi]
-    #             best_move = [boards[i + bi].peek()]
-    #         t2 = perf_counter()
-    #         test_time += t2 - t1
+            bi = torch.argmax(scores)
+            t1 = perf_counter()
+            if scores[bi] > score:
+                score = scores[bi]
+                best_move = [boards[i + bi].peek()]
+            t2 = perf_counter()
+            test_time += t2 - t1
 
-    #         a = max(a, score)
-    #         if a >= b:
-    #             shift_killer_move(best_move[0], board)
-    #             break
+            a = max(a, score)
+            if a >= b:
+                shift_killer_move(best_move[0], board)
+                break
             
-    #     return score, best_move
+        return score, best_move
     # # still in testing
 
     for move in moves:
