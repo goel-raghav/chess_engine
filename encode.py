@@ -20,7 +20,7 @@ def transform_fen(fen):
         else:
             matrix.append(piece_val[char] * .01)
     
-    matrix = np.array(matrix, dtype=np.float16).reshape(8, 8)
+    matrix = np.array(matrix, dtype=np.float16).reshape(1, 8, 8)
     if col_to_move == "b":
         matrix *= -1
 
@@ -58,7 +58,7 @@ def encode_matrix(board: Board):
         if piece is not None:
             piece = piece.symbol()
             matrix[i] |= 2**piece_val[piece]
-    matrix = matrix.reshape((8,8))
+    matrix = matrix.reshape((1,8,8))
     matrix = np.flip(matrix, 0)
     matrix = preprocessing.normalize(matrix) 
     return matrix
