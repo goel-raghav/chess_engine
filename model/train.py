@@ -11,12 +11,14 @@ print("CUDA AVAILABLE", torch.cuda.is_available())
 model = NeuralNetwork().cuda()
 
 batch_size = 256
-learning_rate = 1e-3
+learning_rate = 1e-4
 epochs = 50
 
-with np.load("data\data_12d.npz") as data:
-    x = data['x'].reshape(-1, 12, 8, 8)
+with np.load("data\huge_data_piece.npz") as data:
+    print(data["x"].shape)
+    x = data['x'].reshape(-1, 12, 8, 8) * 10
     y = data['y'].reshape(-1, 1)
+
 
 y = preprocessing.normalize(y)
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
@@ -26,11 +28,13 @@ y_train = torch.tensor(y_train).to(torch.float32)
 X_test = torch.tensor(X_test).to(torch.float32)
 y_test = torch.tensor(y_test).to(torch.float32)
 
+print(len(X_train))
+
 data = TensorDataset(X_train, y_train)
-dataloader = DataLoader(data, batch_size=batch_size)
+dataloader = DataLoader(data, batch_size=batch_size, shuffle=True)
 
 test_data = TensorDataset(X_test, y_test)
-test_dataloader = DataLoader(test_data, batch_size=batch_size)
+test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
 
 loss_fn = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -61,7 +65,7 @@ def test_loop(dataloader, model, loss_fn):
     model.eval()
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
-    test_loss, correct = 0, 0
+    test_loss = 0
 
     # Evaluating the model with torch.no_grad() ensures that no gradients are computed during test mode
     # also serves to reduce unnecessary gradient computations and memory usage for tensors with requires_grad=True
@@ -79,6 +83,7 @@ if __name__ == "__main__":
         print(f"Epoch {t+1}\n-------------------------------")
         train_loop(dataloader, model, loss_fn, optimizer)
         test_loop(test_dataloader, model, loss_fn)
+        torch.save(model.state_dict(), "test_model_weights1")
     print("Done!")
 
-    torch.save(model.state_dict(), "test_model_weights")
+    

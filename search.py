@@ -5,6 +5,7 @@ from time import perf_counter
 from math import inf
 
 import torch
+import torch.ao.quantization
 
 from encode import transform_fen
 from encode import encode_board
@@ -13,12 +14,13 @@ from model.neural_network import NeuralNetwork
 
 # TODO break down into more functions 
 
-network = NeuralNetwork()
-network.load_state_dict(torch.load("model_weights"))
+network = NeuralNetwork().to("cuda")
+network.load_state_dict(torch.load("test_model_weights1"))
 network.eval()
 
+
 def predict(val):
-    val = torch.from_numpy(val)
+    val = torch.from_numpy(val).to("cuda")
     val = val.float()
     with torch.no_grad():
         e = network(val)
@@ -83,7 +85,7 @@ def evaluate(board: Board, color):
     if board.is_checkmate():
         return 100 * color, []
     
-    cur_x = transform_fen(board.fen()).reshape(1, 1, 8, 8)
+    cur_x = encode_board(board).reshape(1, 12, 8, 8) * 10
 
     t1 = perf_counter()
     score = predict(cur_x)

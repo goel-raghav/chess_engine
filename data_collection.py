@@ -10,14 +10,14 @@ blackCount=0
 # open downloaded games
 #----------------------
 
-pgn = open("master_games.pgn")
+pgn = open("data/master_games.pgn")
 games = []
 
 #--------------------------
 # read and put into an array
 #--------------------------
 i= 0
-while i < 150_000:
+while i < 100_000:
     current = chess.pgn.read_game(pgn)
     i+= 1
     if current is not None:
@@ -46,7 +46,7 @@ def get_data(board, i, game_length, moves):
     global blackCount
     global whiteCount
 
-    x = transform_fen(board.fen())
+    x = encode_board(board).reshape(12, 8, 8)
     result = game.headers["Result"]
     
 
@@ -72,7 +72,9 @@ def get_data(board, i, game_length, moves):
     
 # min moves before becoming data
 MIN_MOVES = 7
+c = 0
 for game in games:
+    c += 1
     board = game.board()
     moves = list(game.mainline_moves())
     game_length = len(moves)
@@ -86,9 +88,12 @@ for game in games:
             x.append(cur_x)
             y.append(cur_y)
 
+    if c % 1000 == 0:
+        print(c)
+
 print(whiteCount)
 print(blackCount) 
 # =============================================================================
 # nueral network
 # =============================================================================
-np.savez("data_elo_transform_board", x=x, y=y)
+np.savez("huge_data_piece", x=x, y=y)
