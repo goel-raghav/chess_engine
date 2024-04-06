@@ -24,7 +24,21 @@ def transform_fen(fen):
     if col_to_move == "b":
         matrix *= -1
 
+    return matrix
 
+def encode(board: Board):
+    matrix = np.zeros((1, 8, 8), dtype=np.float16)
+
+    piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,
+                "p": -11, "b": -31, "n": -32, "r": -54, "q": -95, "k": -100}
+
+    pieces = board.piece_map()
+
+    for piece in pieces:
+        matrix[0][-(piece // 8) + 7][piece % 8] = piece_val[pieces[piece].symbol()] * .01
+    
+    if board.turn == BLACK:
+        matrix *= -1
 
     return matrix
 

@@ -10,7 +10,7 @@ import torch
 from torch import nn
 
 from encode import transform_fen
-from encode import encode_board
+from encode import encode
 
 from model.neural_network import NeuralNetwork
 
@@ -78,19 +78,17 @@ def nmax(board: Board, depth, color, a, b):
 
 
             
-        for i in range(0, len(boards), 10):
-            current = boards[i: i+10]
+        for i in range(0, len(boards), 2):
+            current = boards[i: i+2]
             scores, _ = evaluate(current, color * -1)
             scores *= color
             
             
             bi = torch.argmax(scores)
-            t1 = perf_counter()
             if scores[bi] > score:
                 score = scores[bi]
                 best_move = [boards[i + bi].peek()]
-            t2 = perf_counter()
-            test_time += t2 - t1
+            
 
             a = max(a, score)
             if a >= b:
@@ -124,6 +122,7 @@ def evaluate(boards, color):
     global total_eval_time
     global network
     global table_time
+    global test_time
 
     eval_t1 = perf_counter()
     
@@ -132,7 +131,11 @@ def evaluate(boards, color):
     # if board.is_checkmate():
     #     return 100 * color, []
     
-    cur_x = list(map(lambda x: transform_fen(x.fen()), boards))
+    t1 = perf_counter()
+    cur_x = [encode(board) for board in boards]
+    t2 = perf_counter()
+    test_time += t2 - t1
+    
     cur_x = np.stack(cur_x)
 
     t1 = perf_counter()
