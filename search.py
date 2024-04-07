@@ -1,32 +1,17 @@
 from chess import Board
-from chess import Move
 
-from time import perf_counter
 from math import inf
 
-import numpy as np
-
-import torch
-
-from encode import transform_fen
 from encode import encode
 
 from model.neural_network import NeuralNetwork
-
 from evaluator import Evaluator
-
-# TODO break down into more functions 
+from sorter import Sorter
 
 evaluator = Evaluator(NeuralNetwork, "test_model_weights1", encode)
+sorter = Sorter()
 
 print('Ready')
-
-total_sort_time = 0
-test_time = 0
-
-killer_moves = [None, None]
-prev_move = None
-table = {}
     
 def capture_search(board: Board, color):
         score = -inf
@@ -49,7 +34,6 @@ def capture_search(board: Board, color):
         return score, best_move
 
 def nmax(board: Board, depth, color, a, b):
-    global total_sort_time
     global test_time
     if depth == 0:
         score, _ = evaluator.evaluate(board)
@@ -59,15 +43,9 @@ def nmax(board: Board, depth, color, a, b):
     best_move = []
 
     moves = board.legal_moves
+    moves = sorter.sort(moves, board)
 
-    sort_t1 = perf_counter()
-    moves = sorted(moves, key=lambda move: move_key(move, board))
-    sort_t2 = perf_counter()
-    total_sort_time += sort_t2 - sort_t1
-
-    
-
-    # still in testing
+    ''' still in testing
     # if depth == 1:
 
     #     boards = []
@@ -108,7 +86,7 @@ def nmax(board: Board, depth, color, a, b):
     #             break
             
     #     return score, best_move
-    # # still in testing
+    # # still in testing '''
 
     for move in moves:
         board.push(move)
@@ -122,50 +100,17 @@ def nmax(board: Board, depth, color, a, b):
         
         a = max(a, score)
         if a >= b:
-            shift_killer_move(move, board)
+            sorter.shift_killer_move(move, board)
             break
 
     return score, best_move
-
-def move_key(move: Move, board: Board): 
-    global killer_moves
-    global prev_move
-
-    val = {"p": -1, "n": -3, "b": -3, "r": -5, "q": -9, "k": 0}
-    if prev_move == move:
-        return 3
-    if killer_moves[0] == move:
-        return 1
-    if killer_moves[1] == move:
-        return 2
-    piece = board.piece_at(move.to_square)
-    if  piece is not None:
-        piece = piece.symbol()
-        return val[piece.lower()]
-    else:
-        return 10
     
 def profile():
-    global total_sort_time
-    global table_time
-    global test_time
-
     print("Amount of evaluations: ", evaluator.eval_count)
     print("Total time by network predictions: ", evaluator.pred_time)
     print("Average predict time: ", evaluator.pred_time / evaluator.eval_count)
     print("Total eval time:", evaluator.eval_time)
-    print("Total sort time: ", total_sort_time)
-    print("Test time:", test_time)
+    print("Total sort time: ", sorter.sort_time)
 
-    total_sort_time = 0
-    table_time = 0
-    test_time = 0
-
-def shift_killer_move(move: Move, board: Board):
-    global killer_moves
-
-    piece = board.piece_at(move.to_square)
-    if piece is None and not killer_moves[0] == move:
-        killer_moves[1] = killer_moves[0]
-        killer_moves[0] = move
-
+    evaluator.reset()
+    sorter.reset()
