@@ -14,13 +14,15 @@ batch_size = 256
 learning_rate = 1e-4
 epochs = 50
 
-with np.load("data\huge_data_piece.npz") as data:
+with np.load("data/test_data.npz") as data:
     print(data["x"].shape)
-    x = data['x'].reshape(-1, 12, 8, 8) 
+    x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
 
 
+
 y = preprocessing.normalize(y)
+
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 
 X_train = torch.tensor(X_train).to(torch.float32)
@@ -54,7 +56,7 @@ def train_loop(dataloader, model, loss_fn, optimizer):
         optimizer.step()
         optimizer.zero_grad()
 
-        if batch % 100 == 0:
+        if batch % 1000 == 0:
             loss, current = loss.item(), batch * batch_size + len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 

@@ -1,6 +1,8 @@
 import chess.pgn
 import numpy as np
 from piece import get_piece_eval
+from piece import get_move_amount
+from piece import get_king_saftey
 
 # TODO remoeve redunant data points
 
@@ -39,14 +41,14 @@ print("loaded games")
 x = []
 y=[]
 # function to turn fen string into usuable nueral network stuff
-from encode import encode_board
+from encode import encode
 from encode import transform_fen
 # function to convert get x and y
 def get_data(board, i, game_length, moves):
     global blackCount
     global whiteCount
 
-    x = encode_board(board).reshape(12, 8, 8)
+    x = encode(board).reshape(1, 8, 8)
     result = game.headers["Result"]
     
 
@@ -59,11 +61,11 @@ def get_data(board, i, game_length, moves):
     if result == "1-0":
         whiteCount += 1
         win = 1
-        y = win + pe
+        y = win + pe + get_king_saftey(board) + get_move_amount(board)
     elif result == "0-1":
         blackCount += 1
         win = -1
-        y = win + pe
+        y = win + pe + get_king_saftey(board) + get_move_amount(board)
     else:
         y = 0
     
@@ -71,7 +73,7 @@ def get_data(board, i, game_length, moves):
     return x, y
     
 # min moves before becoming data
-MIN_MOVES = 7
+MIN_MOVES = 0
 c = 0
 for game in games:
     c += 1
@@ -96,4 +98,4 @@ print(blackCount)
 # =============================================================================
 # nueral network
 # =============================================================================
-np.savez("huge_data_piece", x=x, y=y)
+np.savez("test_data", x=x, y=y)

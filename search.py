@@ -17,7 +17,7 @@ from model.neural_network import NeuralNetwork
 # TODO break down into more functions 
 
 network = NeuralNetwork()
-network.load_state_dict(torch.load("model_weights"))
+network.load_state_dict(torch.load("test_model_weights1"))
 network.eval()
 
 sample_input = torch.rand(1, 1, 8, 8)
@@ -48,6 +48,21 @@ killer_moves = [None, None]
 prev_move = None
 table = {}
     
+def capture_search(board: Board, color):
+        score = -inf
+        best_move = []
+        for move in board.legal_moves:
+            if board.is_capture(move) and board.peek().to_square == move.to_square:
+                board.push(move)
+                e, line = evaluate([board], color)
+                e *= color
+                board.pop()
+
+                if e > score:
+                    score = e
+                    best_move = [move] + line
+        return score, best_move
+
 def nmax(board: Board, depth, color, a, b):
     global total_sort_time
     global test_time
@@ -67,16 +82,30 @@ def nmax(board: Board, depth, color, a, b):
     sort_t2 = perf_counter()
     total_sort_time += sort_t2 - sort_t1
 
+    
+
     # still in testing
     if depth == 1:
+
         boards = []
         for move in moves:
+            if board.is_capture(move):
+                board.push(move)
+                e, line = capture_search(board, color * -1)
+                e *= -1
+                if e > score:
+                    score = e
+                    best_move = [move] + line
+                board.pop()
+
+                a = max(a, score)
+                if a >= b:
+                    shift_killer_move(best_move[0], board)
+                    break
+               
             board.push(move)
             boards.append(board.copy())
             board.pop()
-        
-
-
             
         for i in range(0, len(boards), 2):
             current = boards[i: i+2]
@@ -115,7 +144,7 @@ def nmax(board: Board, depth, color, a, b):
 
     return score, best_move
 
-def evaluate(boards, color):
+def evaluate(boards: list[Board] , color):
     global eval_count
     global table_count
     global total_predict_time
@@ -128,8 +157,13 @@ def evaluate(boards, color):
     
     eval_count += 1
 
-    # if board.is_checkmate():
-    #     return 100 * color, []
+    for i in range(len(boards)):
+        if boards[i].is_checkmate():
+            array = [0] * len(boards)
+            array[i] = 100 * color
+            
+            return torch.tensor(array).reshape(-1, 1), []
+
     
     t1 = perf_counter()
     cur_x = [encode(board) for board in boards]

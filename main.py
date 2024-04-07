@@ -17,6 +17,15 @@ while True:
     score, best_line = nmax(test, 5, 1, -inf, inf)
     t2 = perf_counter()
 
+    for move in best_line:
+        print(move)
+        test.push(move)
+        print(test)
+
+    for i in range(len(best_line)):
+        test.pop()
+
+
     print("Time: ", t2 - t1)
     profile()
 
