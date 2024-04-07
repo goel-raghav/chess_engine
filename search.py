@@ -7,41 +7,21 @@ from math import inf
 import numpy as np
 
 import torch
-from torch import nn
 
 from encode import transform_fen
 from encode import encode
 
 from model.neural_network import NeuralNetwork
 
+from evaluator import Evaluator
+
 # TODO break down into more functions 
 
-network = NeuralNetwork()
-network.load_state_dict(torch.load("test_model_weights1"))
-network.eval()
-
-sample_input = torch.rand(1, 1, 8, 8)
-torch.jit.enable_onednn_fusion(True)
-traced_model = torch.jit.trace(network, sample_input)
-traced_model = torch.jit.freeze(traced_model)
-traced_model(sample_input)
-traced_model(sample_input)
+evaluator = Evaluator(NeuralNetwork, "test_model_weights1", encode)
 
 print('Ready')
 
-def predict(val):
-    val = torch.from_numpy(val)
-    val = val.float()
-    with torch.no_grad():
-        e = traced_model(val)
-    return e
-
-eval_count = 0
-table_count = 0
-total_predict_time = 0
-total_eval_time = 0
 total_sort_time = 0
-table_time = 0
 test_time = 0
 
 killer_moves = [None, None]
@@ -53,24 +33,27 @@ def capture_search(board: Board, color):
         best_move = []
         for move in board.legal_moves:
             if board.is_capture(move) and board.peek().to_square == move.to_square:
+                
                 board.push(move)
-                e, line = evaluate([board], color)
+                e, line = evaluate([board], color*-1)
                 e *= color
                 board.pop()
 
                 if e > score:
                     score = e
                     best_move = [move] + line
+
+        if score == -inf:
+            score, best_move = evaluate([board], color)
+            score *= color
         return score, best_move
 
 def nmax(board: Board, depth, color, a, b):
     global total_sort_time
     global test_time
     if depth == 0:
-        score, _ = evaluate([board], color)
+        score, _ = evaluator.evaluate(board)
         return score * color, []
-    
-    
     
     score = -inf
     best_move = []
@@ -85,46 +68,46 @@ def nmax(board: Board, depth, color, a, b):
     
 
     # still in testing
-    if depth == 1:
+    # if depth == 1:
 
-        boards = []
-        for move in moves:
-            if board.is_capture(move):
-                board.push(move)
-                e, line = capture_search(board, color * -1)
-                e *= -1
-                if e > score:
-                    score = e
-                    best_move = [move] + line
-                board.pop()
+    #     boards = []
+    #     for move in moves:
+    #         if board.is_capture(move):
+    #             board.push(move)
+    #             e, line = capture_search(board, color * -1)
+    #             e *= -1
+    #             if e > score:
+    #                 score = e
+    #                 best_move = [move] + line
+    #             board.pop()
 
-                a = max(a, score)
-                if a >= b:
-                    shift_killer_move(best_move[0], board)
-                    break
+    #             a = max(a, score)
+    #             if a >= b:
+    #                 shift_killer_move(best_move[0], board)
+    #                 break
                
-            board.push(move)
-            boards.append(board.copy())
-            board.pop()
+    #         board.push(move)
+    #         boards.append(board.copy())
+    #         board.pop()
             
-        for i in range(0, len(boards), 2):
-            current = boards[i: i+2]
-            scores, _ = evaluate(current, color * -1)
-            scores *= color
+    #     for i in range(0, len(boards), 2):
+    #         current = boards[i: i+2]
+    #         scores, _ = evaluate(current, color * -1)
+    #         scores *= color
             
             
-            bi = torch.argmax(scores)
-            if scores[bi] > score:
-                score = scores[bi]
-                best_move = [boards[i + bi].peek()]
+    #         bi = torch.argmax(scores)
+    #         if scores[bi] > score:
+    #             score = scores[bi]
+    #             best_move = [boards[i + bi].peek()]
             
 
-            a = max(a, score)
-            if a >= b:
-                shift_killer_move(best_move[0], board)
-                break
+    #         a = max(a, score)
+    #         if a >= b:
+    #             shift_killer_move(best_move[0], board)
+    #             break
             
-        return score, best_move
+    #     return score, best_move
     # # still in testing
 
     for move in moves:
@@ -143,44 +126,6 @@ def nmax(board: Board, depth, color, a, b):
             break
 
     return score, best_move
-
-def evaluate(boards: list[Board] , color):
-    global eval_count
-    global table_count
-    global total_predict_time
-    global total_eval_time
-    global network
-    global table_time
-    global test_time
-
-    eval_t1 = perf_counter()
-    
-    eval_count += 1
-
-    for i in range(len(boards)):
-        if boards[i].is_checkmate():
-            array = [0] * len(boards)
-            array[i] = 100 * color
-            
-            return torch.tensor(array).reshape(-1, 1), []
-
-    
-    t1 = perf_counter()
-    cur_x = [encode(board) for board in boards]
-    t2 = perf_counter()
-    test_time += t2 - t1
-    
-    cur_x = np.stack(cur_x)
-
-    t1 = perf_counter()
-    score = predict(cur_x)
-    t2 = perf_counter()
-    total_predict_time += t2 - t1
-
-    eval_t2 = perf_counter()
-    total_eval_time += eval_t2 - eval_t1
-
-    return score, []
 
 def move_key(move: Move, board: Board): 
     global killer_moves
@@ -201,27 +146,17 @@ def move_key(move: Move, board: Board):
         return 10
     
 def profile():
-    global eval_count
-    global table_count
-    global total_predict_time
-    global total_eval_time
     global total_sort_time
     global table_time
     global test_time
 
-    print("Amount of evaluations: ", eval_count)
-    print("Table Counts: ", table_count)
-    print("Total time by network predictions: ", total_predict_time)
-    print("Average predict time: ", total_predict_time / eval_count)
-    print("Total eval time:", total_eval_time)
+    print("Amount of evaluations: ", evaluator.eval_count)
+    print("Total time by network predictions: ", evaluator.pred_time)
+    print("Average predict time: ", evaluator.pred_time / evaluator.eval_count)
+    print("Total eval time:", evaluator.eval_time)
     print("Total sort time: ", total_sort_time)
-    print("Total table time:", table_time)
     print("Test time:", test_time)
 
-    total_eval_time = 0
-    eval_count = 0
-    table_count = 0
-    total_predict_time = 0
     total_sort_time = 0
     table_time = 0
     test_time = 0

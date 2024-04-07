@@ -3,7 +3,6 @@ from math import inf
 from time import perf_counter
 from search import profile
 from search import nmax
-from search import predict
 from encode import transform_fen
 
 
@@ -14,7 +13,7 @@ test = Board()
 while True:
     t1 = perf_counter()
     # score, best_line, best_depth = iterative_deepening(test, 5)
-    score, best_line = nmax(test, 5, 1, -inf, inf)
+    score, best_line = nmax(test, 4, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:
@@ -30,6 +29,7 @@ while True:
     profile()
 
     print("Score:", float(score))
+    print("Depth:", len(best_line))
 
     test.push(best_line[0])
     print(test)
