@@ -12,32 +12,39 @@ evaluator = Evaluator(NeuralNetwork, "test_model_weights1", encode)
 sorter = Sorter()
 
 print('Ready')
-    
-def capture_search(board: Board, color):
-        score = -inf
-        best_move = []
-        for move in board.legal_moves:
-            if board.is_capture(move) and board.peek().to_square == move.to_square:
-                
-                board.push(move)
-                e, line = evaluate([board], color*-1)
-                e *= color
-                board.pop()
 
-                if e > score:
-                    score = e
-                    best_move = [move] + line
+def qsearch(board: Board, color, a, b):
+    score = -inf
+    best_move = []
 
-        if score == -inf:
-            score, best_move = evaluate([board], color)
-            score *= color
-        return score, best_move
+    moves = board.legal_moves
+    moves = filter(lambda move: board.is_capture(move), moves)
+    moves = sorter.sort(moves, board)
 
-def nmax(board: Board, depth, color, a, b):
-    global test_time
-    if depth == 0:
+    for move in moves:
+        board.push(move)
+        e, line = qsearch(board, -1 * color, -b, -a)
+        e *= -1
+        if e > score:
+            score = e
+            best_move = [move] + line
+
+        board.pop()
+        
+        a = max(a, score)
+        if a >= b:
+            break
+
+    if score == -inf:
         score, _ = evaluator.evaluate(board)
         return score * color, []
+
+    return score, best_move
+
+def nmax(board: Board, depth, color, a, b):
+    if depth == 0:
+        score, line = qsearch(board, color, a, b)
+        return score * color, line
     
     score = -inf
     best_move = []
