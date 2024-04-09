@@ -3,6 +3,7 @@ from chess import Board
 from chess import Move
 from chess import BLACK, WHITE
 from sklearn import preprocessing
+import numba
 
 
 piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,

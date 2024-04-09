@@ -37,8 +37,10 @@ board.push(Move.from_uci("d1h5"))
 board.push(Move.from_uci("d8a5"))
 board.push(Move.from_uci("h5a5"))
 
-print(traced_model(torch.from_numpy(encode(board)).reshape(1, 1, 8, 8).to(torch.float32)))
+
 
 print(board)
-print(get_move_amount(board))
-print(get_king_saftey(board))
+
+t = perf_counter()
+x = board.knights
+t2 = perf_counter()

@@ -41,6 +41,9 @@ class Evaluator():
         cur_x = self.encode(board).reshape(1, 1, 8, 8)
         score = self.predict(cur_x)
 
+        eval_end_time = perf_counter()
+        self.eval_time += eval_end_time - eval_start_time
+
         return score, []
         
         

@@ -13,7 +13,7 @@ test = Board()
 while True:
     t1 = perf_counter()
     # score, best_line, best_depth = iterative_deepening(test, 5)
-    score, best_line = nmax(test, 4, 1, -inf, inf)
+    score, best_line = nmax(test, 5, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:

@@ -10,7 +10,7 @@ class Sorter():
         sort_start_time = perf_counter()
         smoves = sorted(moves, key = lambda move: self.move_key(move, board))
         sort_end_time = perf_counter()
-        self.sort_time = sort_end_time - sort_start_time
+        self.sort_time += sort_end_time - sort_start_time
         return smoves
 
     def move_key(self, move: chess.Move, board: chess.Board): 
