@@ -16,9 +16,9 @@ class Sorter():
     def move_key(self, move: chess.Move, board: chess.Board): 
         val = {"p": -1, "n": -3, "b": -3, "r": -5, "q": -9, "k": 0}
         if self.killer_moves[0] == move:
-            return -11
+            return 1
         if self.killer_moves[1] == move:
-            return -10
+            return 2
         piece = board.piece_at(move.to_square)
         if  piece is not None:
             piece = piece.symbol()

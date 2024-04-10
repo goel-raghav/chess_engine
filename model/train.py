@@ -4,7 +4,9 @@ from sklearn import preprocessing
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
 from torch import nn
-from neural_network import NeuralNetwork
+
+# REMEMBER TO VHANGE BACK TO ORIGNIAL
+from small_model import NeuralNetwork
 
 print("CUDA AVAILABLE", torch.cuda.is_available())
 
@@ -85,7 +87,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "test_model_weights")
+        torch.save(model.state_dict(), "small_model_weights")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 5:

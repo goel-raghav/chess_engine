@@ -38,8 +38,11 @@ class Evaluator():
 
             return checkmate_score, []
         
+        pred_start_time = perf_counter()
         cur_x = self.encode(board).reshape(1, 1, 8, 8)
         score = self.predict(cur_x)
+        pred_end_time = perf_counter()
+        self.pred_time += pred_end_time - pred_start_time
 
         eval_end_time = perf_counter()
         self.eval_time += eval_end_time - eval_start_time
@@ -48,13 +51,11 @@ class Evaluator():
         
         
     def predict(self, val):
-        pred_start_time = perf_counter()
+
         val = torch.from_numpy(val)
         val = val.float()
         with torch.no_grad():
             e = self.network(val)
-        pred_end_time = perf_counter()
-        self.pred_time += pred_end_time - pred_start_time
         return e
     
     def reset(self):

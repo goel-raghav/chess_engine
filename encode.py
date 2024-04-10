@@ -27,7 +27,7 @@ def transform_fen(fen):
     return matrix
 
 def encode(board: Board):
-    matrix = np.zeros((1, 8, 8), dtype=np.float16)
+    matrix = np.zeros((1, 8, 8))
 
     piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,
                 "p": -11, "b": -31, "n": -32, "r": -54, "q": -95, "k": -100}

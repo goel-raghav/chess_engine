@@ -6,13 +6,13 @@ from math import inf
 
 from encode import encode
 
-from model.neural_network import NeuralNetwork
+from model.small_model import NeuralNetwork
 from evaluator import Evaluator
 from sorter import Sorter
 from transposition_table import Table
 
 
-evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
+evaluator = Evaluator(NeuralNetwork, "small_model_weights", encode)
 sorter = Sorter()
 table = Table()
 
@@ -54,12 +54,7 @@ def qsearch(board: Board, color, a, b, depth):
 
 def nmax(board: Board, depth, color, a, b):
     if depth == 0:
-        key = hash(board)
-        table_score, _ = table.get(key)
-        if table_score is not None:
-            return table_score * color, []
         score, _ = evaluator.evaluate(board)
-        table.add(hash(board), score, 0)
         return score * color, []
     
     score = -inf
@@ -118,8 +113,9 @@ def nmax(board: Board, depth, color, a, b):
         if table_depth is not None and table_depth >= depth:
             e = table_score
             line = []
-        e, line = nmax(board, depth-1, -1 * color, -b, -a)
-        e *= -1
+        else:
+            e, line = nmax(board, depth-1, -1 * color, -b, -a)
+            e *= -1
         if e > score:
             score = e
             best_move = [move] + line
