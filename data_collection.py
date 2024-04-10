@@ -49,26 +49,8 @@ def get_data(board, i, game_length, moves):
     global whiteCount
 
     x = encode(board).reshape(1, 8, 8)
-    result = game.headers["Result"]
     
-
-    pe = 0
-    if i + 1 < game_length:
-        board.push(moves[i+1])
-        pe = get_piece_eval(board)
-        board.pop()
-
-    if result == "1-0":
-        whiteCount += 1
-        win = 1
-        y = win + pe + get_king_saftey(board) + get_move_amount(board)
-    elif result == "0-1":
-        blackCount += 1
-        win = -1
-        y = win + pe + get_king_saftey(board) + get_move_amount(board)
-    else:
-        y = 0
-    
+    y = get_piece_eval(board)  + get_king_saftey(board) + get_move_amount(board)
 
     return x, y
     

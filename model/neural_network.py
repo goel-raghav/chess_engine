@@ -21,7 +21,6 @@ class NeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.Dropout(.3),
             nn.Linear(256, 1),
-            nn.Tanh()
         )
 
     def forward(self, x):

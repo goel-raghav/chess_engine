@@ -12,16 +12,12 @@ model = NeuralNetwork().cuda()
 
 batch_size = 256
 learning_rate = 1e-4
-epochs = 50
+epochs = 200
 
 with np.load("data/test_data.npz") as data:
     print(data["x"].shape)
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
-
-
-
-y = preprocessing.normalize(y)
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 
@@ -79,13 +75,23 @@ def test_loop(dataloader, model, loss_fn):
             
     test_loss /= num_batches
     print("Test_loss", test_loss)
+    return test_loss
 
 if __name__ == "__main__":
+    prev_loss = []
+    best = 0
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         train_loop(dataloader, model, loss_fn, optimizer)
-        test_loop(test_dataloader, model, loss_fn)
-        torch.save(model.state_dict(), "test_model_weights1")
+        curr = test_loop(test_dataloader, model, loss_fn)
+        prev_loss.append(curr)
+        torch.save(model.state_dict(), "test_model_weights")
+
+        if prev_loss[best] < curr:
+             if len(prev_loss) - best - 1 >= 10:
+                 break
+        else:
+            best = len(prev_loss) - 1
     print("Done!")
 
     

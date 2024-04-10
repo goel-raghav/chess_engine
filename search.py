@@ -1,4 +1,6 @@
 from chess import Board
+from chess.polyglot import zobrist_hash as hash
+
 
 from math import inf
 
@@ -7,9 +9,12 @@ from encode import encode
 from model.neural_network import NeuralNetwork
 from evaluator import Evaluator
 from sorter import Sorter
+from transposition_table import Table
 
-evaluator = Evaluator(NeuralNetwork, "test_model_weights1", encode)
+
+evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
 sorter = Sorter()
+table = Table()
 
 print('Ready')
 
@@ -21,6 +26,15 @@ def qsearch(board: Board, color, a, b):
     moves = filter(lambda move: board.is_capture(move), moves)
     moves = sorter.sort(moves, board)
 
+    if len(moves) == 0:
+        # key = hash(board)
+        # table_score = table.get(key)
+        # if table_score is not None:
+        #     return table_score * color, []
+        score, _ = evaluator.evaluate(board)
+        table.add(hash(board), score)
+        return score * color, []
+
     for move in moves:
         board.push(move)
         e, line = qsearch(board, -1 * color, -b, -a)
@@ -28,23 +42,20 @@ def qsearch(board: Board, color, a, b):
         if e > score:
             score = e
             best_move = [move] + line
-
         board.pop()
         
         a = max(a, score)
         if a >= b:
             break
 
-    if score == -inf:
-        score, _ = evaluator.evaluate(board)
-        return score * color, []
+    
 
     return score, best_move
 
 def nmax(board: Board, depth, color, a, b):
     if depth == 0:
         score, line = qsearch(board, color, a, b)
-        return score * color, line
+        return score, line
     
     score = -inf
     best_move = []

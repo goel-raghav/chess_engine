@@ -14,10 +14,28 @@ def get_piece_eval(board: Board):
             p = p.symbol()
             s += piece_val[p]
 
-    return s * .1
+    return s
 
 def get_move_amount(board: Board):
+    default_pos = {"R": [0, 7], "N": [1, 6], "B": [2, 5], "Q": [3], "r": [56, 63], "n": [57, 62], "b": [58, 61], "q": [59]}
+
     current = len(list(board.legal_moves))
+
+    
+
+    white_default_count = 0
+    black_default_count = 0
+    pm = board.piece_map()
+    for key in pm:
+        cur = pm[key].symbol()
+        if cur in ["K", "k", "P", "p"]:
+            continue
+        if cur.isupper() and key in default_pos[cur]:
+            white_default_count += 1
+        elif cur.islower() and key in default_pos[cur]:
+            black_default_count += 1
+
+
 
     board.push(Move.null())
 
@@ -25,12 +43,19 @@ def get_move_amount(board: Board):
 
     board.pop()
 
-    score = current - opp
-
+    color = True
     if board.turn == BLACK:
+        color = False
+
+    if color:
+        score = (current - white_default_count) - (opp - black_default_count)
+    else:
+        score = (current - black_default_count) - (opp - white_default_count) 
         score *= -1
 
-    return score * .1
+    
+
+    return score * .01
 
 def get_king_saftey(board: Board):
     current = 0
@@ -51,5 +76,5 @@ def get_king_saftey(board: Board):
     if board.turn == BLACK:
         score *= -1
 
-    return score * .1
+    return score * .01
     

@@ -3,8 +3,15 @@ from math import inf
 from time import perf_counter
 from search import profile
 from search import nmax
-from encode import transform_fen
+from encode import encode
 
+from model.neural_network import NeuralNetwork
+from evaluator import Evaluator
+from sorter import Sorter
+from transposition_table import Table
+
+
+evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
 
 # TODO create a command prompt for easier testing
 
@@ -13,7 +20,7 @@ test = Board()
 while True:
     t1 = perf_counter()
     # score, best_line, best_depth = iterative_deepening(test, 5)
-    score, best_line = nmax(test, 4, 1, -inf, inf)
+    score, best_line = nmax(test, 3, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:
@@ -21,6 +28,7 @@ while True:
         test.push(move)
         print(test)
 
+    print(evaluator.evaluate(test))
     for i in range(len(best_line)):
         test.pop()
 
