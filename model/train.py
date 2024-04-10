@@ -88,7 +88,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), "test_model_weights")
 
         if prev_loss[best] < curr:
-             if len(prev_loss) - best - 1 >= 10:
+             if len(prev_loss) - best - 1 >= 5:
                  break
         else:
             best = len(prev_loss) - 1

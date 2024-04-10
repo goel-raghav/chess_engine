@@ -22,7 +22,7 @@ class Sorter():
         piece = board.piece_at(move.to_square)
         if  piece is not None:
             piece = piece.symbol()
-            return val[piece.lower()]
+            return val[piece.lower()] - val[board.piece_at(move.from_square).symbol().lower()]
         else:
             return 10
         

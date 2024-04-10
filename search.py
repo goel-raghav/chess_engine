@@ -18,7 +18,7 @@ table = Table()
 
 print('Ready')
 
-def qsearch(board: Board, color, a, b):
+def qsearch(board: Board, color, a, b, depth):
     score = -inf
     best_move = []
 
@@ -26,18 +26,18 @@ def qsearch(board: Board, color, a, b):
     moves = filter(lambda move: board.is_capture(move), moves)
     moves = sorter.sort(moves, board)
 
-    if len(moves) == 0:
-        key = hash(board)
-        table_score, _ = table.get(key)
-        if table_score is not None:
-            return table_score * color, []
+    if len(moves) == 0 or depth == 0:
+        # key = hash(board)
+        # table_score, _ = table.get(key)
+        # if table_score is not None:
+        #     return table_score * color, []
         score, _ = evaluator.evaluate(board)
-        table.add(hash(board), score, 0)
+        # table.add(hash(board), score, 0)
         return score * color, []
 
     for move in moves:
         board.push(move)
-        e, line = qsearch(board, -1 * color, -b, -a)
+        e, line = qsearch(board, -1 * color, -b, -a, depth - 1)
         e *= -1
         if e > score:
             score = e
@@ -54,8 +54,13 @@ def qsearch(board: Board, color, a, b):
 
 def nmax(board: Board, depth, color, a, b):
     if depth == 0:
-        score, line = qsearch(board, color, a, b)
-        return score, line
+        key = hash(board)
+        table_score, _ = table.get(key)
+        if table_score is not None:
+            return table_score * color, []
+        score, _ = evaluator.evaluate(board)
+        table.add(hash(board), score, 0)
+        return score * color, []
     
     score = -inf
     best_move = []
@@ -113,9 +118,8 @@ def nmax(board: Board, depth, color, a, b):
         if table_depth is not None and table_depth >= depth:
             e = table_score
             line = []
-        else:
-            e, line = nmax(board, depth-1, -1 * color, -b, -a)
-            e *= -1
+        e, line = nmax(board, depth-1, -1 * color, -b, -a)
+        e *= -1
         if e > score:
             score = e
             best_move = [move] + line

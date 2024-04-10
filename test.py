@@ -13,6 +13,9 @@ from piece import get_king_saftey
 from piece import get_move_amount
 from piece import get_piece_eval
 from chess.polyglot import zobrist_hash
+from evaluator import Evaluator
+
+evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -37,11 +40,13 @@ board.push(Move.from_uci("d1h5"))
 board.push(Move.from_uci("d7d6"))
 board.push(Move.from_uci("d2d3"))
 board.push(Move.from_uci("d8a5"))
-# board.push(Move.from_uci("h5a5"))
+board.push(Move.from_uci("a2a3"))
+board.push(Move.from_uci("a5h5"))
 
 
 
 print(board)
 
+print(evaluator.evaluate(board))
 
 print(get_king_saftey(board) + get_piece_eval(board) + get_move_amount(board))

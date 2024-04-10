@@ -55,7 +55,7 @@ def get_data(board, i, game_length, moves):
     return x, y
     
 # min moves before becoming data
-MIN_MOVES = 0
+MIN_MOVES = 2
 c = 0
 for game in games:
     c += 1
