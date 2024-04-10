@@ -27,12 +27,12 @@ def qsearch(board: Board, color, a, b):
     moves = sorter.sort(moves, board)
 
     if len(moves) == 0:
-        # key = hash(board)
-        # table_score = table.get(key)
-        # if table_score is not None:
-        #     return table_score * color, []
+        key = hash(board)
+        table_score, _ = table.get(key)
+        if table_score is not None:
+            return table_score * color, []
         score, _ = evaluator.evaluate(board)
-        table.add(hash(board), score)
+        table.add(hash(board), score, 0)
         return score * color, []
 
     for move in moves:
@@ -108,8 +108,14 @@ def nmax(board: Board, depth, color, a, b):
 
     for move in moves:
         board.push(move)
-        e, line = nmax(board, depth-1, -1 * color, -b, -a)
-        e *= -1
+        key = hash(board)
+        table_score, table_depth = table.get(key)
+        if table_depth is not None and table_depth >= depth:
+            e = table_score
+            line = []
+        else:
+            e, line = nmax(board, depth-1, -1 * color, -b, -a)
+            e *= -1
         if e > score:
             score = e
             best_move = [move] + line
@@ -120,7 +126,8 @@ def nmax(board: Board, depth, color, a, b):
         if a >= b:
             sorter.shift_killer_move(move, board)
             break
-
+    
+    table.add(hash(board), score, depth)
     return score, best_move
     
 def profile():
