@@ -3,8 +3,9 @@ from time import perf_counter
 
 class Sorter():
     def __init__(self):
-        self.sort_time = 0
+        self.sort_time = 1
         self.killer_moves = [None, None]
+        self.prev_best_line = []
         
     def sort(self, moves: chess.LegalMoveGenerator, board: chess.Board):
         sort_start_time = perf_counter()
@@ -23,8 +24,10 @@ class Sorter():
         if  piece is not None:
             piece = piece.symbol()
             return val[piece.lower()] - val[board.piece_at(move.from_square).symbol().lower()]
-        else:
-            return 10
+        if move in self.prev_best_line:
+            return -10
+        
+        return 10
         
     def shift_killer_move(self, move: chess.Move, board: chess.Board):
         if not (board.is_capture(move) and self.killer_moves[0] == move):
@@ -32,4 +35,4 @@ class Sorter():
             self.killer_moves[0] = move
 
     def reset(self):
-        self.sort_time = 0
+        self.sort_time = 1

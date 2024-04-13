@@ -1,8 +1,8 @@
 import chess.pgn
 import numpy as np
-from piece import get_piece_eval
-from piece import get_move_amount
-from piece import get_king_saftey
+from nn_eval import get_piece_eval
+from nn_eval import get_move_amount
+from nn_eval import get_king_saftey
 
 # TODO remoeve redunant data points
 

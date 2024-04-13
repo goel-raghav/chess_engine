@@ -18,26 +18,16 @@ class Evaluator():
         self.network(sample_input)
 
         # profiling
-        self.eval_count = 0
-        self.eval_time = 0
-        self.pred_time = 0
+        self.eval_count = 1
+        self.eval_time = 1
+        self.pred_time = 1
 
         self.encode = encode
     
     def evaluate(self, board: chess.Board):
-        self.eval_count += 1
         eval_start_time = perf_counter()
-        
-        checkmate_score = 100
-        if board.is_checkmate():
-            if board.turn == chess.BLACK:
-                checkmate_score *= -1
+        self.eval_count += 1
 
-            eval_end_time = perf_counter()
-            self.eval_time += eval_end_time - eval_start_time
-
-            return checkmate_score, []
-        
         pred_start_time = perf_counter()
         cur_x = self.encode(board).reshape(1, 1, 8, 8)
         score = self.predict(cur_x)
@@ -59,6 +49,6 @@ class Evaluator():
         return e
     
     def reset(self):
-        self.eval_count = 0
-        self.eval_time = 0
-        self.pred_time = 0
+        self.eval_count = 1
+        self.eval_time = 1
+        self.pred_time = 1

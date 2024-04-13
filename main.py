@@ -3,6 +3,7 @@ from math import inf
 from time import perf_counter
 from search import profile
 from search import nmax
+from search import iterative_deepening
 from encode import encode
 
 from model.neural_network import NeuralNetwork
@@ -19,8 +20,8 @@ test = Board()
 
 while True:
     t1 = perf_counter()
-    # score, best_line, best_depth = iterative_deepening(test, 5)
-    score, best_line = nmax(test, 5, 1, -inf, inf)
+    score, best_line = iterative_deepening(test, 4)
+    # score, best_line = nmax(test, 4, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:

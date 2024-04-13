@@ -9,7 +9,7 @@ piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,
                 "p": -11, "b": -31, "n": -32, "r": -54, "q": -95, "k": -100}
 
 
-def transform_fen(fen):
+def transform_fen(board: Board):
     matrix = []
     pos, col_to_move = fen.split(" ")[:2]
     for char in pos:
@@ -27,10 +27,7 @@ def transform_fen(fen):
     return matrix
 
 def encode(board: Board):
-    matrix = np.zeros((1, 8, 8))
-
-    piece_val = {"P": 11, "B": 31, "N": 32, "R": 54, "Q": 95,"K": 100,
-                "p": -11, "b": -31, "n": -32, "r": -54, "q": -95, "k": -100}
+    matrix = np.zeros((1, 8, 8), dtype=np.float16)
 
     pieces = board.piece_map()
 

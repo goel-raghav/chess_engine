@@ -9,11 +9,12 @@ from time import perf_counter
 from model.neural_network import NeuralNetwork
 import torch
 from encode import encode
-from piece import get_king_saftey
-from piece import get_move_amount
-from piece import get_piece_eval
+from nn_eval import get_king_saftey
+from nn_eval import get_move_amount
+from nn_eval import get_piece_eval
 from chess.polyglot import zobrist_hash
 from evaluator import Evaluator
+from encode import encode
 
 evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
 
@@ -24,11 +25,7 @@ network.load_state_dict(torch.load("test_model_weights1"))
 network.eval()
 
 sample_input = torch.rand(1, 1, 8, 8)
-torch.jit.enable_onednn_fusion(True)
 traced_model = torch.jit.trace(network, sample_input)
-traced_model = torch.jit.freeze(traced_model)
-traced_model(sample_input)
-traced_model(sample_input)
 
 import chess.pgn
 import numpy as np
@@ -47,6 +44,12 @@ board.push(Move.from_uci("a5h5"))
 
 print(board)
 
-print(evaluator.evaluate(board))
+t = perf_counter()
+x = encode(board)
+t2 = perf_counter()
+print(t2 - t)
+
+
+# print(encode(board.piece_map(), 1))
 
 print(get_king_saftey(board) + get_piece_eval(board) + get_move_amount(board))

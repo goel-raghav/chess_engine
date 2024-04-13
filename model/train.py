@@ -5,7 +5,6 @@ from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
 from torch import nn
 
-# REMEMBER TO VHANGE BACK TO ORIGNIAL
 from small_model import NeuralNetwork
 
 print("CUDA AVAILABLE", torch.cuda.is_available())

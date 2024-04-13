@@ -61,7 +61,15 @@ def nmax(board: Board, depth, color, a, b):
     best_move = []
 
     moves = board.legal_moves
+    if moves is None:
+        if board.is_checkmate():
+            return 100 * color
+        return 0
+
     moves = sorter.sort(moves, board)
+
+    
+
 
     ''' still in testing
     # if depth == 1:
@@ -129,6 +137,13 @@ def nmax(board: Board, depth, color, a, b):
     
     table.add(hash(board), score, depth)
     return score, best_move
+
+def iterative_deepening(board: Board, max_depth):
+    for i in range(max_depth):
+        score, best_line = nmax(board, i+1, 1, -inf, inf)
+        print(best_line)
+        sorter.prev_best_line = best_line
+    return score, best_line
     
 def profile():
     print("Amount of evaluations: ", evaluator.eval_count)
