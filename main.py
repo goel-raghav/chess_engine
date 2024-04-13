@@ -12,7 +12,7 @@ from sorter import Sorter
 from transposition_table import Table
 
 
-evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
+evaluator = Evaluator(NeuralNetwork, "weights/test_model_weights", encode)
 
 # TODO create a command prompt for easier testing
 

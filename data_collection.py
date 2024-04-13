@@ -1,8 +1,8 @@
 import chess.pgn
 import numpy as np
-from nn_eval import get_piece_eval
-from nn_eval import get_move_amount
-from nn_eval import get_king_saftey
+from model.nn_eval import get_piece_eval
+from model.nn_eval import get_move_amount
+from model.nn_eval import get_king_saftey
 
 # TODO remoeve redunant data points
 
@@ -47,10 +47,16 @@ from encode import transform_fen
 def get_data(board, i, game_length, moves):
     global blackCount
     global whiteCount
+    result = headers["Result"]
+
+    if result == "1-0":
+        win =.5
+    elif result == "0-1":
+        win = -.5
 
     x = encode(board).reshape(1, 8, 8)
     
-    y = get_piece_eval(board)  + get_king_saftey(board) + get_move_amount(board)
+    y = get_piece_eval(board)  + get_king_saftey(board) + get_move_amount(board) + win
 
     return x, y
     

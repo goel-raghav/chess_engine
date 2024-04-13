@@ -3,7 +3,7 @@ from time import perf_counter
 
 class Sorter():
     def __init__(self):
-        self.sort_time = 1
+        self.sort_time = 0
         self.killer_moves = [None, None]
         self.prev_best_line = []
         
@@ -35,4 +35,4 @@ class Sorter():
             self.killer_moves[0] = move
 
     def reset(self):
-        self.sort_time = 1
+        self.sort_time = 0

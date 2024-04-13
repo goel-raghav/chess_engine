@@ -19,8 +19,8 @@ class Evaluator():
 
         # profiling
         self.eval_count = 1
-        self.eval_time = 1
-        self.pred_time = 1
+        self.eval_time = 0
+        self.pred_time = 0
 
         self.encode = encode
     
@@ -50,5 +50,5 @@ class Evaluator():
     
     def reset(self):
         self.eval_count = 1
-        self.eval_time = 1
-        self.pred_time = 1
+        self.eval_time = 0
+        self.pred_time = 0

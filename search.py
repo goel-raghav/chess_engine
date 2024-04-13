@@ -12,7 +12,7 @@ from sorter import Sorter
 from transposition_table import Table
 
 
-evaluator = Evaluator(NeuralNetwork, "small_model_weights", encode)
+evaluator = Evaluator(NeuralNetwork, "weights/small_model_weights", encode)
 sorter = Sorter()
 table = Table()
 
@@ -63,8 +63,8 @@ def nmax(board: Board, depth, color, a, b):
     moves = board.legal_moves
     if moves is None:
         if board.is_checkmate():
-            return 100 * color
-        return 0
+            return 100 * color, []
+        return 0, []
 
     moves = sorter.sort(moves, board)
 
@@ -151,6 +151,8 @@ def profile():
     print("Average predict time: ", evaluator.pred_time / evaluator.eval_count)
     print("Total eval time:", evaluator.eval_time)
     print("Total sort time: ", sorter.sort_time)
+    print("Table count:", table.count)
 
     evaluator.reset()
     sorter.reset()
+    table.reset()

@@ -2,10 +2,17 @@ class Table():
     def __init__(self):
       self.positions = {}
       self.depth = {}
+      self.count = 1
 
     def add(self, key, val, depth):
        self.positions[key] = val
        self.depth[key] = depth
 
     def get(self, key):
-       return self.positions.get(key), self.depth.get(key)
+       score = self.positions.get(key)
+       if score is not None:
+          self.count += 1
+       return score, self.depth.get(key)
+    
+    def reset(self):
+       self.count = 1
