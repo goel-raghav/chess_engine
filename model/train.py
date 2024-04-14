@@ -15,11 +15,13 @@ batch_size = 256
 learning_rate = 1e-4
 epochs = 200
 
-with np.load("data/test_data.npz") as data:
+with np.load("model/data/pickled_test_data.npz") as data:
     print(data["x"].shape)
-    x = data['x'].reshape(-1, 1, 8, 8) 
-    y = data['y'].reshape(-1, 1)
+    x = data['x'][:10_000].reshape(-1, 1, 8, 8) 
+    y = data['y'][:10_000].reshape(-1, 1)
 
+print(x.shape)
+print(y.shape)
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 
 X_train = torch.tensor(X_train).to(torch.float32)
@@ -86,7 +88,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "small_model_weights")
+        torch.save(model.state_dict(), "tsmall_model_weights")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 5:

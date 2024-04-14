@@ -77,4 +77,6 @@ def get_king_saftey(board: Board):
         score *= -1
 
     return score * .01
-    
+
+def eval(board):
+    return get_piece_eval(board) + get_move_amount(board) + get_king_saftey(board)
