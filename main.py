@@ -4,7 +4,6 @@ from time import perf_counter
 from search import profile
 from search import nmax
 from search import iterative_deepening
-from encode import encode
 
 from model.neural_network import NeuralNetwork
 from evaluator import Evaluator
@@ -12,7 +11,6 @@ from sorter import Sorter
 from transposition_table import Table
 
 
-evaluator = Evaluator(NeuralNetwork, "weights/test_model_weights", encode)
 
 # TODO create a command prompt for easier testing
 
@@ -29,7 +27,6 @@ while True:
         test.push(move)
         print(test)
 
-    print(evaluator.evaluate(test))
     for i in range(len(best_line)):
         test.pop()
 

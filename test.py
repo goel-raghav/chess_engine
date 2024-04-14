@@ -8,59 +8,46 @@ import sys
 from time import perf_counter
 from model.neural_network import NeuralNetwork
 import torch
-from encode import encode
 from model.nn_eval import get_king_saftey
 from model.nn_eval import get_move_amount
 from model.nn_eval import get_piece_eval
 from chess.polyglot import zobrist_hash
 from evaluator import Evaluator
-from encode import encode
+from encode import Encoder
 import numba
+import model.small_model
+import os
 
-evaluator = Evaluator(NeuralNetwork, "test_model_weights", encode)
 
-np.set_printoptions(threshold=sys.maxsize)
+encoder = Encoder()
 
-network = NeuralNetwork()
-network.load_state_dict(torch.load("test_model_weights1"))
-network.eval()
 
-sample_input = torch.rand(1, 1, 8, 8)
-traced_model = torch.jit.trace(network, sample_input)
 
 import chess.pgn
 import numpy as np
 
 board = Board()
 board.push(Move.from_uci("e2e3"))
+x = encoder.encode(board)
+print(x)
 board.push(Move.from_uci("c7c6"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("d1h5"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("d7d6"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("d2d3"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("d8a5"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("a2a3"))
+encoder.update(x, board.peek().from_square, board.peek().to_square, board.piece_at(board.peek().to_square))
+print(x)
 board.push(Move.from_uci("a5h5"))
 
-
-
 print(board)
-
-def test(b):
-    l = []
-    for i in range(64):
-        if b >> i & 1:
-            l.append(i)
-    return l
-
-s = 0
-for i in range(1000):
-    t = perf_counter()
-    l = encode(board)    
-    t2 = perf_counter()
-    s += t2 - t
-print(s / 1000)
-
-
-# print(encode(board.piece_map(), 1))
-
-print(get_king_saftey(board) + get_piece_eval(board) + get_move_amount(board))

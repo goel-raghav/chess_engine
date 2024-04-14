@@ -4,8 +4,6 @@ from model.nn_eval import get_piece_eval
 from model.nn_eval import get_move_amount
 from model.nn_eval import get_king_saftey
 
-# TODO remoeve redunant data points
-
 whiteCount=0
 blackCount=0
 #--------------------
@@ -56,7 +54,7 @@ def get_data(board, i, game_length, moves):
 
     x = encode(board).reshape(1, 8, 8)
     
-    y = get_piece_eval(board)  + get_king_saftey(board) + get_move_amount(board) + win
+    y = get_piece_eval(board)  + get_king_saftey(board) + get_move_amount(board)
 
     return x, y
     

@@ -4,15 +4,15 @@ from chess.polyglot import zobrist_hash as hash
 
 from math import inf
 
-from encode import encode
+from encode import Encoder
 
 from model.small_model import NeuralNetwork
 from evaluator import Evaluator
 from sorter import Sorter
 from transposition_table import Table
 
-
-evaluator = Evaluator(NeuralNetwork, "weights/small_model_weights", encode)
+encoder = Encoder()
+evaluator = Evaluator(NeuralNetwork, "weights/small_model_weights", encoder.encode)
 sorter = Sorter()
 table = Table()
 
@@ -68,51 +68,6 @@ def nmax(board: Board, depth, color, a, b):
 
     moves = sorter.sort(moves, board)
 
-    
-
-
-    ''' still in testing
-    # if depth == 1:
-
-    #     boards = []
-    #     for move in moves:
-    #         if board.is_capture(move):
-    #             board.push(move)
-    #             e, line = capture_search(board, color * -1)
-    #             e *= -1
-    #             if e > score:
-    #                 score = e
-    #                 best_move = [move] + line
-    #             board.pop()
-
-    #             a = max(a, score)
-    #             if a >= b:
-    #                 shift_killer_move(best_move[0], board)
-    #                 break
-               
-    #         board.push(move)
-    #         boards.append(board.copy())
-    #         board.pop()
-            
-    #     for i in range(0, len(boards), 2):
-    #         current = boards[i: i+2]
-    #         scores, _ = evaluate(current, color * -1)
-    #         scores *= color
-            
-            
-    #         bi = torch.argmax(scores)
-    #         if scores[bi] > score:
-    #             score = scores[bi]
-    #             best_move = [boards[i + bi].peek()]
-            
-
-    #         a = max(a, score)
-    #         if a >= b:
-    #             shift_killer_move(best_move[0], board)
-    #             break
-            
-    #     return score, best_move
-    # # still in testing '''
 
     for move in moves:
         board.push(move)
