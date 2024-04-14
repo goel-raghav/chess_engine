@@ -1,24 +1,30 @@
 from chess import Board
 from math import inf
 from time import perf_counter
-from search import profile
-from search import nmax
-from search import iterative_deepening
 
-from model.neural_network import NeuralNetwork
+
+from search import Searcher
+from model.small_model import NeuralNetwork
+from transposition_table import Table
+from encode import Encoder
 from evaluator import Evaluator
 from sorter import Sorter
-from transposition_table import Table
 
 
+weights = "weights/small_model_weights"
 
-# TODO create a command prompt for easier testing
+encoder = Encoder()
+evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
+table = Table()
+sorter = Sorter()
+searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board() 
+test = Board()
+
 
 while True:
     t1 = perf_counter()
-    score, best_line = iterative_deepening(test, 4)
+    score, best_line = searcher.iterative_deepening(test, 4)
     # score, best_line = nmax(test, 4, 1, -inf, inf)
     t2 = perf_counter()
 
@@ -32,8 +38,6 @@ while True:
 
 
     print("Time: ", t2 - t1)
-    profile()
-
     print("Score:", float(score))
     print("Depth:", len(best_line))
 
