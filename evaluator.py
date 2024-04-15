@@ -37,7 +37,7 @@ class Evaluator():
         eval_end_time = perf_counter()
         self.eval_time += eval_end_time - eval_start_time
 
-        return score, []
+        return score
         
         
     def predict(self, val):

@@ -24,8 +24,8 @@ test = Board()
 
 while True:
     t1 = perf_counter()
-    score, best_line = searcher.iterative_deepening(test, 4)
-    # score, best_line = nmax(test, 4, 1, -inf, inf)
+    # score, best_line = searcher.iterative_deepening(test, 4)
+    score, best_line = searcher.nmax(test, 4, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:
@@ -44,6 +44,9 @@ while True:
     test.push(best_line[0])
     print(test)
 
+    if test.is_checkmate:
+        print("BOT WINS HAHAHAHAHAHAHAHAHAHAHA")
+        exit()
 
     next_move = input("next move: ")
 
@@ -54,6 +57,9 @@ while True:
             flag = False
         except:
             next_move = input("next move: ")
+
+    with open("saved.txt", "w") as file:
+        file.write(test.fen())
  
     
     print(test)

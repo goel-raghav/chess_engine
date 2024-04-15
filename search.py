@@ -19,7 +19,7 @@ class Searcher():
 
     def nmax(self, board: Board, depth, color, a, b):
         if depth == 0:
-            score, _ = self.evaluate(board)
+            score = self.evaluate(board)
             return score * color, []
         
         score = -inf
