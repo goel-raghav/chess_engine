@@ -1,8 +1,17 @@
 import numpy as np
-from model.classic_eval import eval
 import pickle
-from encode import Encoder
+import chess
+from math import inf
 
+from encode import Encoder
+from sorter import Sorter
+from model.classic_eval import eval
+from transposition_table import Table
+from search import Searcher
+
+table = Table()
+sorter = Sorter()
+searcher = Searcher(eval, sorter, table)
 
 # opens filtered games
 with open("games.pickle", "rb") as file:
@@ -10,7 +19,7 @@ with open("games.pickle", "rb") as file:
 
 print("LOADED GAMES")
 
-
+games = games[:1500]
 x = []
 y = []
 encoder = Encoder()
@@ -28,9 +37,15 @@ for game in games:
         board.push(move)
         if (i > MIN_MOVES):
             x.append(encoder.encode(board))
-            y.append(eval(board))
+            
+            if board.turn == chess.BLACK:
+                score, _ = searcher.nmax(board, 2, -1, -inf, inf)
+                y.append(-score)
+            else:
+                score, _ = searcher.nmax(board, 2, 1, -inf, inf)
+                y.append(score)
 
-    if c % 1000 == 0:
+    if c % 1 == 0:
         print("Game number:", c, "of", len(games))
 
-np.savez("model/data/pickled_test_data", x=x, y=y)
+np.savez("model/data/depth2_data", x=x, y=y)

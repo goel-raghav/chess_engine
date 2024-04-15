@@ -9,9 +9,10 @@ from transposition_table import Table
 from encode import Encoder
 from evaluator import Evaluator
 from sorter import Sorter
+from model.classic_eval import eval
 
 
-weights = "weights/small_model_weights"
+weights = "tsmall_model_weights"
 
 encoder = Encoder()
 evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
@@ -33,6 +34,8 @@ while True:
         test.push(move)
         print(test)
 
+    print(eval(test))
+
     for i in range(len(best_line)):
         test.pop()
 
@@ -44,19 +47,24 @@ while True:
     test.push(best_line[0])
     print(test)
 
-    if test.is_checkmate:
+    if test.is_checkmate():
         print("BOT WINS HAHAHAHAHAHAHAHAHAHAHA")
         exit()
 
-    next_move = input("next move: ")
-
     flag = True
+    next_move = input("next move: ")
     while flag:
         try:
             test.push_san(next_move)
             flag = False
         except:
             next_move = input("next move: ")
+
+    
+
+    
+
+    
 
     with open("saved.txt", "w") as file:
         file.write(test.fen())
