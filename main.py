@@ -12,13 +12,13 @@ from sorter import Sorter
 from model.classic_eval import eval
 
 
-weights = "tsmall_model_weights"
+# weights = "tsmall_model_weights"
 
-encoder = Encoder()
-evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
+# encoder = Encoder()
+# evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
 table = Table()
 sorter = Sorter()
-searcher = Searcher(evaluator.evaluate, sorter, table)
+searcher = Searcher(eval, sorter, table)
 
 test = Board()
 
@@ -26,7 +26,7 @@ test = Board()
 while True:
     t1 = perf_counter()
     # score, best_line = searcher.iterative_deepening(test, 4)
-    score, best_line = searcher.nmax(test, 4, 1, -inf, inf)
+    score, best_line = searcher.nmax(test, 2, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:

@@ -48,4 +48,4 @@ for game in games:
     if c % 1 == 0:
         print("Game number:", c, "of", len(games))
 
-np.savez("model/data/depth2_data", x=x, y=y)
+np.savez("model/data/Tdepth2_data", x=x, y=y)

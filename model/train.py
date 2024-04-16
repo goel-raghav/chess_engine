@@ -98,7 +98,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "tsmall_model_weights")
+        torch.save(model.state_dict(), "big_depth2_weights")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 5:
