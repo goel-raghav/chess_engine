@@ -12,11 +12,11 @@ print("CUDA AVAILABLE", torch.cuda.is_available())
 
 model = NeuralNetwork().cuda()
 
-batch_size = 32
+batch_size = 64
 learning_rate = 1e-4
 epochs = 200
 
-with np.load("model/data/depth2_data.npz") as data:
+with np.load("model/data/Tcenti_depth2_data.npz") as data:
     print(data["x"].shape)
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
@@ -27,6 +27,7 @@ print(y.shape)
 
 y[y == inf] = y[y != inf].max()
 y[y == -inf] = y[y != -inf].min()
+y = torch.sigmoid(torch.from_numpy(y) / 200)
 
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
@@ -98,7 +99,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "big_depth2_weights")
+        torch.save(model.state_dict(), "Tdepth2_weights")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 5:

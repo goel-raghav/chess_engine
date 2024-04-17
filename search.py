@@ -19,20 +19,22 @@ class Searcher():
         self.count = 1
 
     def nmax(self, board: Board, depth, color, a, b):
+
+        score = -inf
+        best_move = []
+
+        moves = board.legal_moves
+        if moves.count() == 0:
+            if board.is_checkmate():
+                return 100 * color * -1, []
+            return 0, []
+        
         if depth == 0:
             score = self.evaluate(board)
             self.count += 1
             return score * color, []
         
-        score = -inf
-        best_move = []
-
-        moves = board.legal_moves
-        if moves is None:
-            if board.is_checkmate():
-                return 100 * color, []
-            return 0, []
-
+        
         moves = self.sorter.sort(moves, board)
 
 

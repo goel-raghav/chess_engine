@@ -17,6 +17,7 @@ searcher = Searcher(eval, sorter, table)
 with open("games.pickle", "rb") as file:
     games = pickle.load(file)
 
+print(len(games))
 print("LOADED GAMES")
 
 games = games[:1500]
@@ -48,4 +49,4 @@ for game in games:
     if c % 1 == 0:
         print("Game number:", c, "of", len(games))
 
-np.savez("model/data/Tdepth2_data", x=x, y=y)
+np.savez("model/data/centi_depth2_data", x=x, y=y)

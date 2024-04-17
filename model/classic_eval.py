@@ -18,22 +18,22 @@ def score(board: Board):
     return mobility(board)
 
 def material(board: Board):
-    wp = (board.pawns & board.occupied_co[WHITE]).bit_count() * 1
-    wb = (board.bishops & board.occupied_co[WHITE]).bit_count() * 3
-    wn = (board.knights & board.occupied_co[WHITE]).bit_count() * 3
-    wr = (board.rooks & board.occupied_co[WHITE]).bit_count() * 5
-    wq = (board.queens & board.occupied_co[WHITE]).bit_count() * 9
+    wp = (board.pawns & board.occupied_co[WHITE]).bit_count() * 100
+    wb = (board.bishops & board.occupied_co[WHITE]).bit_count() * 330
+    wn = (board.knights & board.occupied_co[WHITE]).bit_count() * 320
+    wr = (board.rooks & board.occupied_co[WHITE]).bit_count() * 500
+    wq = (board.queens & board.occupied_co[WHITE]).bit_count() * 900
 
-    bp = (board.pawns & board.occupied_co[BLACK]).bit_count() * -1
-    bb = (board.bishops & board.occupied_co[BLACK]).bit_count() * -3
-    bn = (board.knights & board.occupied_co[BLACK]).bit_count() * -3
-    br = (board.rooks & board.occupied_co[BLACK]).bit_count() * -5
-    bq = (board.queens & board.occupied_co[BLACK]).bit_count() * -9
+    bp = (board.pawns & board.occupied_co[BLACK]).bit_count() * -100
+    bb = (board.bishops & board.occupied_co[BLACK]).bit_count() * -330
+    bn = (board.knights & board.occupied_co[BLACK]).bit_count() * -320
+    br = (board.rooks & board.occupied_co[BLACK]).bit_count() * -500
+    bq = (board.queens & board.occupied_co[BLACK]).bit_count() * -900
 
     score = wp + wb + wn + wr + wq + bp + bb + bn + br + bq
     return score
 
 def mobility(board: Board):
-    return board.legal_moves.count() * .01
+    return board.legal_moves.count()
     
 
