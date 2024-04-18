@@ -12,6 +12,7 @@ from sorter import Sorter
 from model.classic_eval import eval
 
 
+
 weights = "Tdepth2_weights"
 
 encoder = Encoder()
@@ -20,13 +21,13 @@ table = Table()
 sorter = Sorter()
 searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board()
+test = Board("8/6k1/8/5Q2/1P6/8/8/2K3N1 w - - 21 62")
 
 
 while True:
     t1 = perf_counter()
-    # score, best_line = searcher.iterative_deepening(test, 4)
-    score, best_line = searcher.nmax(test, 4, 1, -inf, inf)
+    # score, best_line = searcher.iterative_deepening(test, 6)
+    score, best_line = searcher.nmax(test, 6, 1, -inf, inf)
     t2 = perf_counter()
 
     for move in best_line:

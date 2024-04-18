@@ -18,11 +18,7 @@ class NeuralNetwork(nn.Module):
             nn.Dropout(.3),
             nn.Linear(64, 1),
         )
-        self.quant = QuantStub()
-        self.dequant = DeQuantStub()
 
     def forward(self, x):
-        x = self.quant(x)
         x = self.layers(x)
-        x = self.dequant(x)
         return x

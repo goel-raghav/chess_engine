@@ -22,7 +22,7 @@ time = 0
 iterations = 100
 
 print(bin(board.occupied_co[WHITE]))
-print(board)
+print(board.piece_map())
 
 
 start = perf_counter()

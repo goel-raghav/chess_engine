@@ -16,7 +16,7 @@ batch_size = 64
 learning_rate = 1e-4
 epochs = 200
 
-with np.load("model/data/Tcenti_depth2_data.npz") as data:
+with np.load("model/data/table_depth2.npz") as data:
     print(data["x"].shape)
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
@@ -27,10 +27,12 @@ print(y.shape)
 
 y[y == inf] = y[y != inf].max()
 y[y == -inf] = y[y != -inf].min()
-y = torch.sigmoid(torch.from_numpy(y) / 200)
+y = torch.sigmoid(torch.from_numpy(y) / 400)
 
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
+
+
 
 
 

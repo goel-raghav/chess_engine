@@ -2,6 +2,7 @@ import numpy as np
 import pickle
 import chess
 from math import inf
+from time import perf_counter
 
 from encode import Encoder
 from sorter import Sorter
@@ -20,15 +21,20 @@ with open("games.pickle", "rb") as file:
 print(len(games))
 print("LOADED GAMES")
 
-games = games[:1500]
+print("FIX CHECKMATES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+DATA_LENGTH = 3000
+games = games[:DATA_LENGTH]
 x = []
 y = []
 encoder = Encoder()
     
 MIN_MOVES = 2
 c = 0
+total_time = 0
 
 for game in games:
+    game_start = perf_counter()
     c += 1
     board = game.board()
     moves = list(game.mainline_moves())
@@ -45,8 +51,12 @@ for game in games:
             else:
                 score, _ = searcher.nmax(board, 2, 1, -inf, inf)
                 y.append(score)
+    game_end = perf_counter()
+    total_time += game_end - game_start
 
     if c % 1 == 0:
         print("Game number:", c, "of", len(games))
+        average_time = total_time / c
+        print("Estimated time left", average_time * (DATA_LENGTH - c))
 
-np.savez("model/data/centi_depth2_data", x=x, y=y)
+np.savez("model/data/table_depth2", x=x, y=y)
