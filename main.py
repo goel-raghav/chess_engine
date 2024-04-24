@@ -21,13 +21,13 @@ table = Table()
 sorter = Sorter()
 searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board()
+test = Board("Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51")
 
 
 while True:
     t1 = perf_counter()
-    score, best_line = searcher.iterative_deepening(test, 4)
-    # score, best_line = searcher.nmax(test, 5, 1, -inf, inf)
+    # score, best_line = searcher.iterative_deepening(test, 7)
+    score, best_line = searcher.nmax(test, 5, 1, -inf, inf)
     t2 = perf_counter()
 
     table.clear()
@@ -37,10 +37,10 @@ while True:
         test.push(move)
         print(test)
 
-    # print(eval(test))
+    print(eval(test))
 
-    # for i in range(len(best_line)):
-    #     test.pop()
+    for i in range(len(best_line)):
+        test.pop()
 
     evaluator.profile()
     evaluator.reset()

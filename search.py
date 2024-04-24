@@ -26,7 +26,7 @@ class Searcher():
         moves = board.legal_moves
         if moves.count() == 0:
             if board.is_checkmate():
-                return 100 * color * -1, []
+                return 1000 * color * (depth+1), []
             return 0, []
         
         if depth == 0:
@@ -40,14 +40,17 @@ class Searcher():
 
         for move in moves:
             board.push(move)
-            key = hash(board)
-            table_score, table_depth = self.table.get(key)
-            if table_depth is not None and table_depth >= depth:
-                e = table_score
-                line = []
-            else:
-                e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
-                e *= -1
+            # key = hash(board)
+
+            # used_table = False
+            # table_score, table_depth = self.table.get(key)
+            # if table_depth is not None and table_depth >= depth:
+            #     used_table = True
+            #     e = table_score
+            #     line = []
+            # else:
+            e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
+            e *= -1
             if e > score:
                 score = e
                 best_move = [move] + line
@@ -59,7 +62,8 @@ class Searcher():
                 self.sorter.shift_killer_move(move, board)
                 break
         
-        self.table.add(hash(board), score, depth)
+        # if not used_table:
+        #     self.table.add(hash(board), score, depth)
         return score, best_move
 
     def iterative_deepening(self, board: Board, max_depth):
