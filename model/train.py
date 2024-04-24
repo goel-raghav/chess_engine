@@ -108,6 +108,7 @@ if __name__ == "__main__":
                  break
         else:
             best = len(prev_loss) - 1
+    print(prev_loss)
     print("Done!")
 
     

@@ -23,7 +23,7 @@ print("LOADED GAMES")
 
 print("FIX CHECKMATES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-DATA_LENGTH = 3000
+DATA_LENGTH = 1500
 games = games[:DATA_LENGTH]
 x = []
 y = []

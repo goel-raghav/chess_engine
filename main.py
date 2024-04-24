@@ -37,10 +37,10 @@ while True:
         test.push(move)
         print(test)
 
-    print(eval(test))
+    # print(eval(test))
 
-    for i in range(len(best_line)):
-        test.pop()
+    # for i in range(len(best_line)):
+    #     test.pop()
 
     evaluator.profile()
     evaluator.reset()
