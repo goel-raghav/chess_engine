@@ -52,3 +52,9 @@ class Evaluator():
         self.eval_count = 1
         self.eval_time = 0
         self.pred_time = 0
+
+    def profile(self):
+        print("Eval Count:", self.eval_count)
+        print("Eval Time:", self.eval_time)
+        print("Total Pred Time:", self.pred_time)
+        print("Average Pred Time:", self.pred_time / self.eval_count)

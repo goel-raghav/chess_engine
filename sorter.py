@@ -36,3 +36,6 @@ class Sorter():
 
     def reset(self):
         self.sort_time = 0
+
+    def profile(self):
+        print("Sort Time:", self.sort_time)
