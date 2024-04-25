@@ -16,16 +16,18 @@ class Sorter():
 
     def move_key(self, move: chess.Move, board: chess.Board): 
         val = {"p": -1, "n": -3, "b": -3, "r": -5, "q": -9, "k": 0}
-        if self.killer_moves[0] == move:
-            return 1
-        if self.killer_moves[1] == move:
-            return 2
+        if move in self.prev_best_line:
+            return -10
         piece = board.piece_at(move.to_square)
         if  piece is not None:
             piece = piece.symbol()
             return val[piece.lower()] - val[board.piece_at(move.from_square).symbol().lower()]
-        if move in self.prev_best_line:
-            return -10
+        if self.killer_moves[0] == move:
+            return 1
+        if self.killer_moves[1] == move:
+            return 2
+        
+        
         
         return 10
         

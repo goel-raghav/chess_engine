@@ -17,6 +17,7 @@ class Searcher():
         self.sorter = sorter
         self.table = table
         self.count = 1
+        self.cut = 0
 
     def nmax(self, board: Board, depth, color, a, b):
 
@@ -40,17 +41,17 @@ class Searcher():
 
         for move in moves:
             board.push(move)
-            # key = hash(board)
+            key = hash(board)
 
-            # used_table = False
-            # table_score, table_depth = self.table.get(key)
-            # if table_depth is not None and table_depth >= depth:
-            #     used_table = True
-            #     e = table_score
-            #     line = []
-            # else:
-            e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
-            e *= -1
+            used_table = False
+            table_score, table_depth = self.table.get(key)
+            if table_depth is not None and table_depth >= depth:
+                used_table = True
+                e = table_score
+                line = []
+            else:
+                e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
+                e *= -1
             if e > score:
                 score = e
                 best_move = [move] + line
@@ -60,16 +61,20 @@ class Searcher():
             a = max(a, score)
             if a >= b:
                 self.sorter.shift_killer_move(move, board)
+                self.cut += 1 * depth
                 break
         
-        # if not used_table:
-        #     self.table.add(hash(board), score, depth)
+        if not used_table:
+            self.table.add(hash(board), score, depth)
         return score, best_move
 
     def iterative_deepening(self, board: Board, max_depth):
         for i in range(max_depth):
             score, best_line = self.nmax(board, i+1, 1, -inf, inf)
             print(best_line)
+
+            if score >= 1000:
+                break
             self.sorter.prev_best_line = best_line
         return score, best_line
     
