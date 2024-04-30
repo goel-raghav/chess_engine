@@ -27,7 +27,7 @@ class Searcher():
         moves = board.legal_moves
         if moves.count() == 0:
             if board.is_checkmate():
-                return 1000 * color * (depth+1), []
+                return 1000 * -1 * (depth+1), []
             return 0, []
         
         if depth == 0:
@@ -73,7 +73,7 @@ class Searcher():
             score, best_line = self.nmax(board, i+1, 1, -inf, inf)
             print(best_line)
 
-            if score >= 1000:
+            if abs(score) >= 1000:
                 break
             self.sorter.prev_best_line = best_line
         return score, best_line
