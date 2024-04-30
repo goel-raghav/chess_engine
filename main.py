@@ -31,7 +31,7 @@ while True:
     # score, best_line = searcher.nmax(test, 5, 1, -inf, inf)
     t2 = perf_counter()
 
-    table.clear()
+    # table.clear()
 
     for move in best_line:
         print(move)
@@ -71,12 +71,6 @@ while True:
             flag = False
         except:
             next_move = input("next move: ")
-
-    
-
-    
-
-    
 
     with open("saved.txt", "w") as file:
         file.write(test.fen())
