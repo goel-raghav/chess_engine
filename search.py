@@ -16,8 +16,11 @@ class Searcher():
         self.evaluate = evaluate
         self.sorter = sorter
         self.table = table
+        self.encoder = Encoder()
         self.count = 1
         self.cut = 0
+        self.root = []
+        self.updatable = True
 
     def nmax(self, board: Board, depth, color, a, b):
 
@@ -31,15 +34,19 @@ class Searcher():
             return 0, []
         
         if depth == 0:
-            score = self.evaluate(board)
+            score = self.evaluate(board, self.root, self.updatable, color)
             self.count += 1
             return score * color, []
         
         
         moves = self.sorter.sort(moves, board)
 
-
+        self.root = self.encoder.encode(board) * -1
         for move in moves:
+            if board.is_castling(move) or board.is_en_passant(move):
+                self.updatable = False
+            else:
+                self.updatable = True
             board.push(move)
             key = hash(board)
 
@@ -49,6 +56,7 @@ class Searcher():
                 used_table = True
                 e = table_score
                 line = []
+            
             else:
                 e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
                 e *= -1

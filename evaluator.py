@@ -2,9 +2,10 @@ import torch
 import chess
 from time import perf_counter
 from typing import Callable
+from encode import Encoder
 
 class Evaluator():
-    def __init__(self, NeuralNetwork: torch.nn.Module, weights_path: str, encode: Callable):
+    def __init__(self, NeuralNetwork: torch.nn.Module, weights_path: str, encoder: Encoder):
         # set up NN
         self.network = NeuralNetwork()
         self.network.load_state_dict(torch.load(weights_path))
@@ -22,15 +23,36 @@ class Evaluator():
         self.eval_time = 0
         self.pred_time = 0
 
-        self.encode = encode
+        self.encoder = encoder
     
-    def evaluate(self, board: chess.Board):
+    def evaluate(self, board: chess.Board, root, updatable, color):
         eval_start_time = perf_counter()
         self.eval_count += 1
 
         pred_start_time = perf_counter()
-        cur_x = self.encode(board).reshape(1, 1, 8, 8)
-        score = self.predict(cur_x)
+
+        score = 0
+        last_move = board.peek()
+
+        
+
+        if updatable:
+            capture = self.encoder.make(root, last_move.from_square, last_move.to_square, board.piece_at(last_move.to_square), color)
+            score = self.predict(root.reshape(1, 1, 8, 8))
+
+            # if test_score != score:
+            #     print("UPDATE ERROR")
+            #     exit()
+
+            self.encoder.unmake(root, last_move.from_square, last_move.to_square, board.piece_at(last_move.to_square), capture, color)
+        else:
+            cur_x = self.encoder.encode(board).reshape(1, 1, 8, 8)
+            score = self.predict(cur_x)
+
+        
+            
+
+
         pred_end_time = perf_counter()
         self.pred_time += pred_end_time - pred_start_time
 

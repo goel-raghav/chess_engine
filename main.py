@@ -17,12 +17,12 @@ from model.classic_eval import eval
 weights = "Tdepth2_weights"
 
 encoder = Encoder()
-evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
+evaluator = Evaluator(NeuralNetwork, weights, encoder)
 table = Table()
 sorter = Sorter()
 searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board()
+test = Board("Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51")
 # "Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51" good mate in 3 checker
 
 reader = chess.polyglot.open_reader("opening.bin")
