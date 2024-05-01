@@ -14,7 +14,7 @@ from model.classic_eval import eval
 
 
 
-weights = "Tdepth2_weights"
+weights = "15000depth2_weights"
 
 encoder = Encoder()
 evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)

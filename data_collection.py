@@ -21,9 +21,7 @@ with open("games.pickle", "rb") as file:
 print(len(games))
 print("LOADED GAMES")
 
-print("FIX CHECKMATES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
-DATA_LENGTH = 1500
+DATA_LENGTH = 15000
 games = games[:DATA_LENGTH]
 x = []
 y = []
@@ -57,6 +55,6 @@ for game in games:
     if c % 1 == 0:
         print("Game number:", c, "of", len(games))
         average_time = total_time / c
-        print("Estimated time left", average_time * (DATA_LENGTH - c))
+        print("Estimated time left", (average_time * (DATA_LENGTH - c)) / 3600) 
 
-np.savez("model/data/table_depth2", x=x, y=y)
+np.savez("model/data/15000depth2", x=x, y=y)
