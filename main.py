@@ -22,7 +22,7 @@ table = Table()
 sorter = Sorter()
 searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board()
+test = Board("Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51")
 # "Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51" good mate in 3 checker
 
 reader = chess.polyglot.open_reader("opening.bin")
@@ -43,7 +43,7 @@ while True:
             in_opening = False
     if not in_opening:
         t1 = perf_counter()
-        score, best_line = searcher.iterative_deepening(test, 4)
+        score, best_line = searcher.iterative_deepening(test, 6)
         # score, best_line = searcher.nmax(test, 5, 1, -inf, inf)
         t2 = perf_counter()
         
@@ -67,6 +67,7 @@ while True:
     table.profile()
     table.reset()
     print("CUTS:", searcher.cut)
+    print("TEST TIME", searcher.test_time)
     searcher.cut = 0
 
     print("Time: ", t2 - t1)

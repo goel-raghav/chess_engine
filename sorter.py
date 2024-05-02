@@ -15,9 +15,9 @@ class Sorter():
         return smoves
 
     def move_key(self, move: chess.Move, board: chess.Board): 
-        val = {"p": -1, "n": -3, "b": -3, "r": -5, "q": -9, "k": 0}
+        val = {"p": -1, "n": -3.2, "b": -3.3, "r": -5, "q": -9, "k": 0}
         if move in self.prev_best_line:
-            return -10
+            return -100 + self.prev_best_line.index(move)
         piece = board.piece_at(move.to_square)
         if  piece is not None:
             piece = piece.symbol()
