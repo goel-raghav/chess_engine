@@ -29,7 +29,7 @@ class Searcher():
         moves = board.legal_moves
         if not any(board.generate_legal_moves()):
             if board.is_check():
-                return 1000 * -1 * (depth+1), []
+                return 10000 * -1 * (depth+1), []
             else:
                 return 0, []
     
@@ -81,7 +81,7 @@ class Searcher():
             score, best_line = self.nmax(board, i+1, 1, -inf, inf)
             print(best_line)
 
-            if abs(score) >= 1000:
+            if abs(score) >= 10000:
                 break
 
             self.sorter.prev_best_line = best_line + self.sorter.prev_best_line

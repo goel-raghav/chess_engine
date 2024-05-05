@@ -27,7 +27,7 @@ print(y.shape)
 
 y[y == inf] = y[y != inf].max()
 y[y == -inf] = y[y != -inf].min()
-y = torch.sigmoid(torch.from_numpy(y) / 400)
+y = torch.sigmoid(torch.from_numpy(y) / 600)
 
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "15000depth2_weights")
+        torch.save(model.state_dict(), "T15000depth2_weights")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 5:

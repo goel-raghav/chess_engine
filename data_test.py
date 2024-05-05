@@ -19,7 +19,7 @@ searcher = Searcher(eval, sorter, table)
 board = chess.Board('r1bqkbnr/1pp2ppp/p1n5/4p3/3pP2P/P2P1PP1/1PP5/RNBQKBNR b KQkq - 0 6')
 
 time = 0
-iterations = 100
+iterations = 1000
 
 print(bin(board.occupied_co[WHITE]))
 print(board.piece_map())
