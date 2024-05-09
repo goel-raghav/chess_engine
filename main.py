@@ -22,7 +22,7 @@ table = Table()
 sorter = Sorter()
 searcher = Searcher(evaluator.evaluate, sorter, table)
 
-test = Board("rnbqkb1r/pp1pp1pp/5n2/B1p2p2/3P4/8/PPP1PPPP/RN1QKBNR w KQkq - 2 4")
+test = Board("rnbqr1k1/pp3pbp/3p1np1/2p5/2PNP3/2N1B3/PPQ1BPPP/R3K2R w KQ c6 0 10")
 # "Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51" good mate in 3 checker
 
 reader = chess.polyglot.open_reader("opening.bin")
@@ -43,7 +43,7 @@ while True:
             in_opening = False
     if not in_opening:
         t1 = perf_counter()
-        score, best_line = searcher.iterative_deepening(test, 1)
+        score, best_line = searcher.iterative_deepening(test, 4)
         # score, best_line = searcher.nmax(test, 5, 1, -inf, inf)
         t2 = perf_counter()
         
@@ -55,7 +55,7 @@ while True:
         test.push(move)
         print(test)
 
-    print(eval(test))
+    print(evaluator.evaluate(test))
 
     for i in range(len(best_line)):
         test.pop()

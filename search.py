@@ -38,7 +38,7 @@ class Searcher():
         if depth == 0:
             score = self.evaluate(board)
             self.count += 1
-            return score * color, []
+            return score, []
         
         
         moves = self.sorter.sort(moves, board)
@@ -50,15 +50,15 @@ class Searcher():
             key = hash(board)
 
             used_table = False
-            table_score, table_depth = self.table.get(key)
-            if table_depth is not None and table_depth >= depth:
-                used_table = True
-                e = table_score
-                line = []
+            # table_score, table_depth = self.table.get(key)
+            # if table_depth is not None and table_depth >= depth:
+            #     used_table = True
+            #     e = table_score
+            #     line = []
             
             if not used_table:
                 e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
-                e *= -1
+                e = e * -1
             if e > score:
                 score = e
                 best_move = [move] + line

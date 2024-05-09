@@ -21,13 +21,14 @@ with open("games.pickle", "rb") as file:
 print(len(games))
 print("LOADED GAMES")
 
-DATA_LENGTH = 15000
+DATA_LENGTH = 49000
 games = games[:DATA_LENGTH]
 x = []
 y = []
+result = []
 encoder = Encoder()
     
-MIN_MOVES = 2
+MIN_MOVES = 5
 c = 0
 total_time = 0
 
@@ -38,17 +39,33 @@ for game in games:
     moves = list(game.mainline_moves())
     game_length = len(moves)
 
+    headers = game.headers
+
+    end =  headers["Result"]
+    r = 0.5
+    if end == "0-1":
+        r = -1
+    elif end == "1-0":
+        r = 1
+
     for i, move in enumerate(moves):
         board.push(move)
         if (i > MIN_MOVES):
             x.append(encoder.encode(board))
+
+
             
             if board.turn == chess.BLACK:
                 score, _ = searcher.nmax(board, 2, -1, -inf, inf)
                 y.append(-score)
+            
+                result.append(r)
+
             else:
                 score, _ = searcher.nmax(board, 2, 1, -inf, inf)
                 y.append(score)
+
+                result.append(r)
     game_end = perf_counter()
     total_time += game_end - game_start
 
@@ -57,4 +74,7 @@ for game in games:
         average_time = total_time / c
         print("Estimated time left", (average_time * (DATA_LENGTH - c)) / 3600) 
 
-np.savez("model/data/15000depth2", x=x, y=y)
+
+print(result.count(1))
+print(result.count(-1))
+np.savez("model/data/megadepth2", x=x, y=y, result=result)
