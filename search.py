@@ -22,6 +22,30 @@ class Searcher():
         self.cut = 0
         self.test_time = 0
 
+    def qsearch(self, board: Board, color, a, b):
+        stand_pat = self.evaluate(board) * color
+        if stand_pat >= b:
+            return b, []
+        if a < stand_pat:
+            a = stand_pat
+
+        moves = board.generate_legal_captures()
+        moves = self.sorter.sort(moves, board)
+        best_move = []
+        for move in moves:
+            board.push(move)
+            score, line = self.qsearch(board, color * -1, -b, -a)
+            score *= -1
+            board.pop()
+
+            if score >= b:
+                return b, [move] + line
+            if score > a:
+                best_move = [move] + line
+                a = score
+        return a, best_move
+        
+
     def nmax(self, board: Board, depth, color, a, b):
 
         score = -inf
@@ -36,9 +60,9 @@ class Searcher():
 
         
         if depth == 0:
-            score = self.evaluate(board)
+            score, line = self.qsearch(board, color, a, b)
             self.count += 1
-            return score * color, []
+            return score, line
         
         
         moves = self.sorter.sort(moves, board)
@@ -73,6 +97,8 @@ class Searcher():
         
         if not used_table:
             self.table.add(hash(board), score, depth)
+
+        
         return score, best_move
 
     def iterative_deepening(self, board: Board, max_depth):
