@@ -74,15 +74,15 @@ class Searcher():
             key = hash(board)
 
             used_table = False
-            table_score, table_depth = self.table.get(key)
-            if table_depth is not None and table_depth >= depth:
-                used_table = True
-                e = table_score
-                line = []
+            # table_score, table_depth = self.table.get(key)
+            # if table_depth is not None and table_depth >= depth:
+            #     used_table = True
+            #     e = table_score
+            #     line = []
             
             if not used_table:
                 e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
-                e *= -1
+                e = e * -1
             if e > score:
                 score = e
                 best_move = [move] + line

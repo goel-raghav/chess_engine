@@ -7,6 +7,6 @@ with np.load("model/data/table_depth2.npz") as data:
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
 
-print(len(y) - np.count_nonzero(y))
-plt.scatter(y, sigmoid(from_numpy(y) / 600))
-plt.show()
+print(x[y == 0][0])
+# plt.scatter(y, sigmoid(from_numpy(y) / 600))
+# plt.show()

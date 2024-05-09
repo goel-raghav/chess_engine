@@ -12,11 +12,11 @@ print("CUDA AVAILABLE", torch.cuda.is_available())
 
 model = NeuralNetwork().cuda()
 
-batch_size = 64
+batch_size = 256
 learning_rate = 1e-4
 epochs = 200
 
-with np.load("model/data/15000depth2.npz") as data:
+with np.load("model/data/megadepth2.npz") as data:
     print(data["x"].shape)
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
@@ -25,10 +25,11 @@ print(x.shape)
 print(y.shape)
 
 
-y[y == inf] = y[y != inf].max()
-y[y == -inf] = y[y != -inf].min()
+y[y >= 10_000] = y[y < 10_000].max()
+y[y <= -10_000] = y[y > -10_000].min()
+print(y.max())
+print(y.min())
 y = torch.sigmoid(torch.from_numpy(y) / 600)
-
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 
@@ -104,7 +105,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), "T15000depth2_weights")
 
         if prev_loss[best] < curr:
-             if len(prev_loss) - best - 1 >= 5:
+             if len(prev_loss) - best - 1 >= 7:
                  break
         else:
             best = len(prev_loss) - 1
