@@ -14,15 +14,24 @@ sorter = Sorter()
 
 encoder = Encoder()
 
-evaluator = Evaluator(NeuralNetwork, "T15000depth2_weights", encoder.encode)
+evaluator = Evaluator(NeuralNetwork, "megadepth2_weights", encoder.encode)
 
-board = Board("rnbk1b1r/pp1pp1pp/5n2/2p2p2/3P4/8/PPP1PPPP/RN1QKBNR w KQ - 0 5")
-searcher = Searcher(eval, sorter, table)
+board = Board("rn3rk1/pppqppbp/6p1/7n/2BPP1b1/2N1BN2/PP3PPP/2RQK2R w K - 3 10")
+classic_searcher = Searcher(eval, sorter, table)
+nn_searcher = Searcher(evaluator.evaluate, sorter, table)
 
-board.push_uci("a5d8")
 print(board)
+board.push_uci("f3e5")
 
-print(evaluator.evaluate(board))
 
-score, best_line = searcher.nmax(board, 2, 1, -inf, inf)
-print(sigmoid(tensor(score) / 600))
+score, best_line = classic_searcher.nmax(board, 1, 1, -inf, inf)
+nn_score, nn_best_line = nn_searcher.nmax(board, 1, 1, -inf, inf)
+
+print("classic", best_line[0])
+print(score)
+print()
+print("nn", nn_best_line)
+print(nn_score)
+
+board.push(nn_best_line[0])
+print(board)

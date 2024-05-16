@@ -20,6 +20,7 @@ with open("games.pickle", "rb") as file:
 
 print(len(games))
 print("LOADED GAMES")
+print("FIX SEARCH THING BEFORE DOING THIS")
 
 DATA_LENGTH = 49000
 games = games[:DATA_LENGTH]

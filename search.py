@@ -14,16 +14,18 @@ from transposition_table import Table
 from typing import Callable
 
 class Searcher():
-    def __init__(self, evaluate: Callable, sorter: Sorter, table: Table):
+    def __init__(self, evaluate: Callable, sorter: Sorter, table: Table, is_qsearch = False):
         self.evaluate = evaluate
         self.sorter = sorter
         self.table = table
-        self.count = 1
         self.cut = 0
         self.test_time = 0
+        self.is_qsearch = is_qsearch
 
-    def qsearch(self, board: Board, color, a, b):
-        stand_pat = self.evaluate(board) * color
+    def qsearch(self, board: Board, color, a, b, depth, max_depth = 4):
+        stand_pat = self.evaluate(board)
+        if depth == max_depth:
+            return stand_pat, []
         if stand_pat >= b:
             return b, []
         if a < stand_pat:
@@ -34,7 +36,7 @@ class Searcher():
         best_move = []
         for move in moves:
             board.push(move)
-            score, line = self.qsearch(board, color * -1, -b, -a)
+            score, line = self.qsearch(board, color * -1, -b, -a, depth + 1)
             score *= -1
             board.pop()
 
@@ -60,8 +62,11 @@ class Searcher():
 
         
         if depth == 0:
-            score, line = self.qsearch(board, color, a, b)
-            self.count += 1
+            if self.is_qsearch:
+                score, line = self.qsearch(board, color, a, b, 0)
+            else:
+                score = self.evaluate(board)
+                line = []
             return score, line
         
         
@@ -74,15 +79,15 @@ class Searcher():
             key = hash(board)
 
             used_table = False
-            # table_score, table_depth = self.table.get(key)
-            # if table_depth is not None and table_depth >= depth:
-            #     used_table = True
-            #     e = table_score
-            #     line = []
+            table_score, table_depth = self.table.get(key)
+            if table_depth is not None and table_depth >= depth:
+                used_table = True
+                e = table_score
+                line = []
             
             if not used_table:
                 e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
-                e = e * -1
+                e *= -1
             if e > score:
                 score = e
                 best_move = [move] + line
@@ -110,6 +115,6 @@ class Searcher():
             if abs(score) >= 10000:
                 break
 
-            self.sorter.prev_best_line = best_line + self.sorter.prev_best_line
+            self.sorter.prev_best_line += [best_line[0]]
         return score, best_line
     

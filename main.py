@@ -14,15 +14,15 @@ from model.classic_eval import eval
 
 
 
-weights = "15000depth2_weights"
+weights = "megadepth2_weights"
 
 encoder = Encoder()
 evaluator = Evaluator(NeuralNetwork, weights, encoder.encode)
 table = Table()
 sorter = Sorter()
-searcher = Searcher(evaluator.evaluate, sorter, table)
+searcher = Searcher(evaluator.evaluate, sorter, table, is_qsearch=True)
 
-test = Board("rnbqr1k1/pp3pbp/3p1np1/2p5/2PNP3/2N1B3/PPQ1BPPP/R3K2R w KQ c6 0 10")
+test = Board("r4rk1/p3ppbp/4b1p1/3R4/8/4BP2/PPP3PP/2K2B1R w - - 1 15")
 # "Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51" good mate in 3 checker
 
 reader = chess.polyglot.open_reader("opening.bin")
@@ -36,8 +36,10 @@ while True:
     t1 = 0
 
     if in_opening:
-        entry = reader.get(test)
-        if entry is not None:
+        moves = reader.get(test)
+        
+        if moves is not None:
+            entry = reader.weighted_choice(test)
             best_line = [entry.move]
         else:
             in_opening = False
