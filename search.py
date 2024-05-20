@@ -14,7 +14,7 @@ from transposition_table import Table
 from typing import Callable
 
 class Searcher():
-    def __init__(self, evaluate: Callable, sorter: Sorter, table: Table, is_qsearch = False):
+    def __init__(self, evaluate: Callable, sorter: Sorter, table: Table, is_qsearch):
         self.evaluate = evaluate
         self.sorter = sorter
         self.table = table

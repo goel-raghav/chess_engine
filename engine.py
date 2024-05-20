@@ -14,12 +14,12 @@ import pickle
 
 
 class Engine:
-    def __init__(self, model, weights, name) -> None:
+    def __init__(self, model, weights, name, qsearch=True) -> None:
         self.table = Table()
         self.encoder = Encoder()
         self.sorter = Sorter()
         self.evaluator = Evaluator(model, weights, self.encoder.encode)
-        self.searcher = Searcher(self.evaluator.evaluate, self.sorter, self.table, is_qsearch=True)
+        self.searcher = Searcher(self.evaluator.evaluate, self.sorter, self.table, qsearch)
         self.name = name
         self.reader = chess.polyglot.open_reader("opening.bin")
 
