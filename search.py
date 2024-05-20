@@ -22,7 +22,7 @@ class Searcher():
         self.test_time = 0
         self.is_qsearch = is_qsearch
 
-    def qsearch(self, board: Board, color, a, b, depth, max_depth = 4):
+    def qsearch(self, board: Board, a, b, depth, max_depth = 4):
         stand_pat = self.evaluate(board)
         if depth == max_depth:
             return stand_pat, []
@@ -36,7 +36,7 @@ class Searcher():
         best_move = []
         for move in moves:
             board.push(move)
-            score, line = self.qsearch(board, color * -1, -b, -a, depth + 1)
+            score, line = self.qsearch(board, -b, -a, depth + 1)
             score *= -1
             board.pop()
 
@@ -48,7 +48,7 @@ class Searcher():
         return a, best_move
         
 
-    def nmax(self, board: Board, depth, color, a, b):
+    def nmax(self, board: Board, depth, a, b):
 
         score = -inf
         best_move = []
@@ -63,7 +63,7 @@ class Searcher():
         
         if depth == 0:
             if self.is_qsearch:
-                score, line = self.qsearch(board, color, a, b, 0)
+                score, line = self.qsearch(board, a, b, 0)
             else:
                 score = self.evaluate(board)
                 line = []
@@ -86,7 +86,7 @@ class Searcher():
                 line = []
             
             if not used_table:
-                e, line = self.nmax(board, depth-1, -1 * color, -b, -a)
+                e, line = self.nmax(board, depth-1, -b, -a)
                 e *= -1
             if e > score:
                 score = e
@@ -109,7 +109,7 @@ class Searcher():
     def iterative_deepening(self, board: Board, max_depth):
         self.sorter.prev_best_line = []
         for i in range(max_depth):
-            score, best_line = self.nmax(board, i+1, 1, -inf, inf)
+            score, best_line = self.nmax(board, i+1, -inf, inf)
             print(best_line)
 
             if abs(score) >= 10000:
