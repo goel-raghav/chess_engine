@@ -13,7 +13,7 @@ test = Board("r1bqk1nr/pppnbppp/8/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR w KQkq - 2 8")
 reader = chess.polyglot.open_reader("opening.bin")
 in_opening = True
 
-engine = Engine(NeuralNetwork, weights, "tester")
+engine = Engine(NeuralNetwork, weights)
 
 
 while True:

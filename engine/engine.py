@@ -6,6 +6,8 @@ from engine.encode import Encoder
 from model.classic_eval import eval
 from math import inf
 
+
+
 from chess import Board
 from chess import BLACK
 import chess.polyglot
@@ -14,13 +16,17 @@ import pickle
 
 
 class Engine:
-    def __init__(self, model, weights, name, qsearch=True) -> None:
+    def __init__(self, model, weights, qsearch=True, classic=False) -> None:
         self.table = Table()
         self.encoder = Encoder()
         self.sorter = Sorter()
         self.evaluator = Evaluator(model, weights, self.encoder.encode)
-        self.searcher = Searcher(self.evaluator.evaluate, self.sorter, self.table, qsearch)
-        self.name = name
+
+        if not classic:
+            self.searcher = Searcher(self.evaluator.evaluate, self.sorter, self.table, qsearch)
+        else:
+            self.searcher = Searcher(eval, self.sorter, self.table, qsearch)
+
         self.reader = chess.polyglot.open_reader("opening.bin")
 
 
@@ -32,7 +38,7 @@ class Engine:
             best_line = [entry.move]
             return 0, best_line
         else:
-            return self.searcher.iterative_deepening(board, 4)
+            return self.searcher.iterative_deepening(board, depth)
     
     def profile(self):
         self.evaluator.profile()
@@ -44,10 +50,6 @@ class Engine:
         print("CUTS:", self.searcher.cut)
         print("TEST TIME", self.searcher.test_time)
         self.searcher.cut = 0
-
-    def serialize(self):
-        with open(self.name+".pkl", "wb") as file:
-            pickle.dump(self, file)
 
 
 

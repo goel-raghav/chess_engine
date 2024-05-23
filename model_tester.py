@@ -3,11 +3,11 @@ from model.small_model import NeuralNetwork as nn
 import chess
 import chess.pgn
 
-new_weights = "megadepth2_weights"
+new_weights = "weights/best"
 old_weights = "15000depth2_weights"
 
-new_engine = Engine(nn, new_weights, "new")
-old_engine = Engine(nn, new_weights, "old", qsearch=False)
+new_engine = Engine(nn, new_weights, qsearch=False)
+old_engine = Engine(nn, new_weights, qsearch=False, classic=True)
 
 board = chess.Board()
 
