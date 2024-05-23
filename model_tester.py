@@ -1,4 +1,4 @@
-from engine import Engine
+from engine.engine import Engine
 from model.small_model import NeuralNetwork as nn
 import chess
 import chess.pgn

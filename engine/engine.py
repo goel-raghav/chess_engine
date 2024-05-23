@@ -1,8 +1,8 @@
-from evaluator import Evaluator
-from search import Searcher
-from sorter import Sorter
-from transposition_table import Table
-from encode import Encoder
+from engine.evaluator import Evaluator
+from engine.search import Searcher
+from engine.sorter import Sorter
+from engine.transposition_table import Table
+from engine.encode import Encoder
 from model.classic_eval import eval
 from math import inf
 

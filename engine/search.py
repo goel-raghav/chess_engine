@@ -6,11 +6,11 @@ from math import inf
 
 from time import perf_counter
 
-from encode import Encoder
+from engine.encode import Encoder
 from model.small_model import NeuralNetwork
-from evaluator import Evaluator
-from sorter import Sorter
-from transposition_table import Table
+from engine.evaluator import Evaluator
+from engine.sorter import Sorter
+from engine.transposition_table import Table
 from typing import Callable
 
 class Searcher():

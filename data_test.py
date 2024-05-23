@@ -5,11 +5,11 @@ from math import inf
 from time import perf_counter
 from chess import WHITE, BLACK
 
-from encode import Encoder
-from sorter import Sorter
+from engine.encode import Encoder
+from engine.sorter import Sorter
 from model.classic_eval import eval
-from transposition_table import Table
-from search import Searcher
+from engine.transposition_table import Table
+from engine.search import Searcher
 
 table = Table()
 sorter = Sorter()

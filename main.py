@@ -1,10 +1,10 @@
 from chess import Board
 import chess.polyglot
 from time import perf_counter
-from engine import Engine
+from engine.engine import Engine
 from model.small_model import NeuralNetwork
 
-weights = "megadepth2_weights"
+weights = "weights/best"
 
 
 test = Board("r1bqk1nr/pppnbppp/8/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR w KQkq - 2 8")

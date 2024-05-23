@@ -4,11 +4,11 @@ import chess
 from math import inf
 from time import perf_counter
 
-from encode import Encoder
-from sorter import Sorter
+from engine.encode import Encoder
+from engine.sorter import Sorter
 from model.classic_eval import eval
-from transposition_table import Table
-from search import Searcher
+from engine.transposition_table import Table
+from engine.search import Searcher
 
 table = Table()
 sorter = Sorter()
@@ -57,13 +57,13 @@ for game in games:
 
             
             if board.turn == chess.BLACK:
-                score, _ = searcher.nmax(board, 2, -1, -inf, inf)
-                y.append(-score)
+                score, _ = searcher.nmax(board, 2, -inf, inf)
+                y.append(score)
             
                 result.append(r)
 
             else:
-                score, _ = searcher.nmax(board, 2, 1, -inf, inf)
+                score, _ = searcher.nmax(board, 2, -inf, inf)
                 y.append(score)
 
                 result.append(r)
