@@ -31,7 +31,7 @@ y[y <= -10_000] = y[y > -10_000].min()
 print(y.max())
 print(y.min())
 
-y = torch.sigmoid(0.00328782 * torch.from_numpy(y) + 0.11215524)
+y = torch.sigmoid(0.00295567 * torch.from_numpy(y) + 0.10348419)
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 

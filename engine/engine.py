@@ -33,7 +33,7 @@ class Engine:
         moves = self.reader.get(board)
         
         if moves is not None:
-            entry = self.reader.weighted_choice(board)
+            entry = self.reader.choice(board)
             best_line = [entry.move]
             return 0, best_line
         else:

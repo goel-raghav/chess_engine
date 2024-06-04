@@ -3,14 +3,16 @@ import chess.polyglot
 from time import perf_counter
 from engine.engine import Engine
 from model.small_model import NeuralNetwork
+from model.classic_eval import eval
+import torch
 
-weights = "weights/best"
+weights = "weights/new"
 
 
 test = Board("r1bqk1nr/pppnbppp/8/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR w KQkq - 2 8")
 # "Q7/8/8/2p1k3/2P5/1P1P4/5PR1/2K5 w - - 1 51" good mate in 3 checker
 
-reader = chess.polyglot.open_reader("opening.bin")
+
 in_opening = True
 
 engine = Engine(NeuralNetwork, weights)
@@ -29,7 +31,9 @@ while True:
     for move in best_line:
         print(move)
         test.push(move)
-        print(test)
+        print(test.fen())
+
+    print(torch.sigmoid(torch.tensor(0.00328782 * eval(test) + 0.11215524)))
 
     for i in range(len(best_line)):
         test.pop()

@@ -10,6 +10,7 @@ def eval(board: Board):
     board.push(Move.null())
     opp = score(board)
     board.pop()
+
     
     return m + pos + (curr - opp)
 
@@ -114,4 +115,4 @@ def piece_square_table(board: Board):
             black_index = ((7 - square // 8) * 8) + (square % 8)
             score -= table[black_index]
 
-    return square
+    return score
