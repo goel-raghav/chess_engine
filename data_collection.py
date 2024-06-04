@@ -12,7 +12,7 @@ from engine.search import Searcher
 
 table = Table()
 sorter = Sorter()
-searcher = Searcher(eval, sorter, table)
+searcher = Searcher(eval, sorter, table, False)
 
 # opens filtered games
 with open("games.pickle", "rb") as file:
@@ -20,9 +20,8 @@ with open("games.pickle", "rb") as file:
 
 print(len(games))
 print("LOADED GAMES")
-print("FIX SEARCH THING BEFORE DOING THIS")
 
-DATA_LENGTH = 49000
+DATA_LENGTH = 20000
 games = games[:DATA_LENGTH]
 x = []
 y = []
@@ -45,7 +44,7 @@ for game in games:
     end =  headers["Result"]
     r = 0.5
     if end == "0-1":
-        r = -1
+        r = 0
     elif end == "1-0":
         r = 1
 
@@ -54,19 +53,14 @@ for game in games:
         if (i > MIN_MOVES):
             x.append(encoder.encode(board))
 
-
-            
             if board.turn == chess.BLACK:
                 score, _ = searcher.nmax(board, 2, -inf, inf)
-                y.append(score)
-            
-                result.append(r)
-
+                score *= -1
             else:
                 score, _ = searcher.nmax(board, 2, -inf, inf)
-                y.append(score)
+            y.append(score)
+            result.append(r)
 
-                result.append(r)
     game_end = perf_counter()
     total_time += game_end - game_start
 
@@ -77,5 +71,5 @@ for game in games:
 
 
 print(result.count(1))
-print(result.count(-1))
-np.savez("model/data/megadepth2", x=x, y=y, result=result)
+print(result.count(0))
+np.savez("model/data/10000", x=x, y=y, result=result)

@@ -5,6 +5,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
 from torch import nn
 from math import inf
+import math
 
 from small_model import NeuralNetwork
 
@@ -16,7 +17,7 @@ batch_size = 256
 learning_rate = 1e-4
 epochs = 200
 
-with np.load("model/data/megadepth2.npz") as data:
+with np.load("model/data/10000.npz") as data:
     print(data["x"].shape)
     x = data['x'].reshape(-1, 1, 8, 8) 
     y = data['y'].reshape(-1, 1)
@@ -29,7 +30,8 @@ y[y >= 10_000] = y[y < 10_000].max()
 y[y <= -10_000] = y[y > -10_000].min()
 print(y.max())
 print(y.min())
-y = torch.sigmoid(torch.from_numpy(y) / 600)
+
+y = torch.sigmoid(0.00328782 * torch.from_numpy(y) + 0.11215524)
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
 
@@ -91,7 +93,7 @@ def test_loop(dataloader, model, loss_fn):
             
             
     test_loss /= num_batches
-    print("Test_loss", test_loss)
+    print("Test_loss", math.sqrt(test_loss))
     return test_loss
 
 if __name__ == "__main__":
@@ -102,7 +104,7 @@ if __name__ == "__main__":
         train_loop(dataloader, model, loss_fn, optimizer)
         curr = test_loop(test_dataloader, model, loss_fn)
         prev_loss.append(curr)
-        torch.save(model.state_dict(), "T15000depth2_weights")
+        torch.save(model.state_dict(), "weights/new")
 
         if prev_loss[best] < curr:
              if len(prev_loss) - best - 1 >= 7:

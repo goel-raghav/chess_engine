@@ -11,9 +11,7 @@ def eval(board: Board):
     opp = score(board)
     board.pop()
     
-    if board.turn:
-        return m + pos + (curr - opp)
-    return  (m + pos + (curr - opp)) * -1
+    return m + pos + (curr - opp)
 
 def score(board: Board):
     return mobility(board)

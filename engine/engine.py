@@ -21,13 +21,12 @@ class Engine:
         self.encoder = Encoder()
         self.sorter = Sorter()
         self.evaluator = Evaluator(model, weights, self.encoder.encode)
-
         if not classic:
             self.searcher = Searcher(self.evaluator.evaluate, self.sorter, self.table, qsearch)
         else:
             self.searcher = Searcher(eval, self.sorter, self.table, qsearch)
 
-        self.reader = chess.polyglot.open_reader("opening.bin")
+        self.reader = chess.polyglot.open_reader("engine/opening.bin")
 
 
     def get_line(self, board: Board, depth):

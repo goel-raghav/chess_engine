@@ -62,10 +62,13 @@ class Searcher():
 
         
         if depth == 0:
+            color = -1
+            if board.turn:
+                color = 1
             if self.is_qsearch:
                 score, line = self.qsearch(board, a, b, 0)
             else:
-                score = self.evaluate(board)
+                score = self.evaluate(board) * color
                 line = []
             return score, line
         
@@ -108,12 +111,16 @@ class Searcher():
 
     def iterative_deepening(self, board: Board, max_depth):
         self.sorter.prev_best_line = []
+        color = -1
+        if color:
+            color = 1
+
         for i in range(max_depth):
             score, best_line = self.nmax(board, i+1, -inf, inf)
             print(best_line)
 
-            if abs(score) >= 10000:
-                break
+            # if abs(score) >= 10000:
+            #     break
 
             self.sorter.prev_best_line += [best_line[0]]
         return score, best_line
