@@ -57,7 +57,10 @@ class Searcher():
             if board.is_check():
                 return 10000 * -1 * (depth+1), []
             else:
-                return 0, []
+                return .5, []
+            
+        if(board.can_claim_threefold_repetition()):
+            return .5, []
     
 
         
@@ -119,8 +122,8 @@ class Searcher():
             score, best_line = self.nmax(board, i+1, -inf, inf)
             print(best_line)
 
-            # if abs(score) >= 10000:
-            #     break
+            if abs(score) >= 10000:
+                break
 
             self.sorter.prev_best_line += [best_line[0]]
         return score, best_line
