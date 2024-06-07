@@ -11,13 +11,13 @@ def update(engine, board):
     
     print(game, file=open("test.pgn", "w"), end="\n\n")
 
-def versus(old_engine, new_engine):
+def versus(white_engine, black_engine):
 
     board = chess.Board()
 
     while True:
-        update(old_engine, board)
-        update(new_engine, board)
+        update(white_engine, board)
+        update(black_engine, board)
 
 if __name__ == "__main__":
     new_weights = "weights/new"
