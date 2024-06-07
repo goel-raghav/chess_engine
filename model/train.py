@@ -1,59 +1,18 @@
 import torch
-import numpy as np
-from sklearn import preprocessing
-from torch.utils.data import TensorDataset, DataLoader
-from sklearn.model_selection import train_test_split
 from torch import nn
-from math import inf
+from small_model import NeuralNetwork
+from load_data import load_data
+from loss_fn import loss_fn
 import math
 
-from small_model import NeuralNetwork
-
-print("CUDA AVAILABLE", torch.cuda.is_available())
 
 model = NeuralNetwork().cuda()
 
-batch_size = 256
-learning_rate = 1e-4
+batch_size = 128
+learning_rate = 1e-2
 epochs = 200
 
-with np.load("model/data/10000.npz") as data:
-    print(data["x"].shape)
-    x = data['x'].reshape(-1, 1, 8, 8) 
-    y = data['y'].reshape(-1, 1)
-
-print(x.shape)
-print(y.shape)
-
-
-y[y >= 10_000] = y[y < 10_000].max()
-y[y <= -10_000] = y[y > -10_000].min()
-print(y.max())
-print(y.min())
-
-y = torch.sigmoid(0.00295567 * torch.from_numpy(y) + 0.10348419)
-
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size= .1)
-
-
-
-
-
-
-X_train = torch.tensor(X_train).to(torch.float32)
-y_train = torch.tensor(y_train).to(torch.float32)
-X_test = torch.tensor(X_test).to(torch.float32)
-y_test = torch.tensor(y_test).to(torch.float32)
-
-print(len(X_train))
-
-data = TensorDataset(X_train, y_train)
-dataloader = DataLoader(data, batch_size=batch_size, shuffle=True)
-
-test_data = TensorDataset(X_test, y_test)
-test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
-
-loss_fn = nn.MSELoss()
+dataloader, test_dataloader = load_data(batch_size)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 def train_loop(dataloader, model, loss_fn, optimizer):
@@ -64,7 +23,7 @@ def train_loop(dataloader, model, loss_fn, optimizer):
     for batch, (X, y) in enumerate(dataloader):
         # Compute prediction and loss
         pred = model(X.cuda())
-        loss = loss_fn(pred, y.cuda())
+        loss = loss_fn(pred, y.cuda(), .9)
 
         # Backpropagation
         loss.backward()
@@ -89,7 +48,7 @@ def test_loop(dataloader, model, loss_fn):
     with torch.no_grad():
         for X, y in dataloader:
             pred = model(X.cuda())
-            test_loss += loss_fn(pred, y.cuda()).item()
+            test_loss += loss_fn(pred, y.cuda(), .9).item()
             
             
     test_loss /= num_batches
